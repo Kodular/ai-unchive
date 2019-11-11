@@ -34,7 +34,7 @@ export class AIAReader {
       blk.getData(new zip.TextWriter(), function(text) {
         this.screens.push({
           'name' : blk.split('/').pop().split('.')[0],
-          'screen' : new Screen('', text);
+          'screen' : new Screen('', text)
         })
       });
     }
