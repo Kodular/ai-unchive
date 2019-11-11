@@ -5,10 +5,10 @@ export class View {
   }
 
   setStyleName(styleName) {
-      domElement.classList.add(styleName);
+      this.domElement.classList.add(styleName);
   }
 
   removeStyleName(styleName) {
-      domElement.classList.remove(styleName);
+      this.domElement.classList.remove(styleName);
   }
 }
