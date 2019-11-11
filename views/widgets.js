@@ -5,7 +5,7 @@ export class Image extends View {
     super('IMG');
     this.source = undefined;
     if(source != null) {
-      setSource(source);
+      this.setSource(source);
     }
   }
   setSource(source) {
@@ -20,9 +20,9 @@ export class Label extends View {
     this.text = undefined;
     if(text != null) {
       if(isHTML) {
-        setHTML(text);
+        this.setHTML(text);
       } else {
-        setText(text);
+        this.setText(text);
       }
     }
   }
