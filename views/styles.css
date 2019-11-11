@@ -32,6 +32,7 @@ body {
 .title-bar__title {
   font-size: 16px;
   font-weight: 500;
+  flex-grow: 2;
 }
 
 .unchive-label {
@@ -41,4 +42,22 @@ body {
 .unchive-button {
   border: 0;
   box-shadow: none;
+  background: transparent;
+  outline: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.unchive-button--icon i {
+  font-size: 20px;
+}
+
+.unchive-button--icon {
+  border-radius: 3600px;
+  padding: 20px;
+  transition: background 0.2s;
+}
+
+.unchive-button--icon:hover {
+  background-color: rgba(200, 200, 200, 0.1);
 }
