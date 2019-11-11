@@ -4,7 +4,7 @@ import { Node } from './node.js'
 export class NodeList extends View {
   constructor() {
     super('DIV');
-    this.setStyleName('node-list');
+    this.addStyleName('node-list');
   }
 
   addNode(node) {
