@@ -1,7 +1,7 @@
 import { Screen } from './screen.js'
 
 export class AIAReader {
-  static read(content) {
+  read(content) {
     this.screens = [];
     var readerObj = content instanceof Blob ? new zip.BlobReader(content) : new zip.HttpReader(content);
     zip.createReader(readerObj, (reader) => {
@@ -11,15 +11,17 @@ export class AIAReader {
           this.fetchBlockData();
           this.fetchSchemeData();
 
-          console.log(JSON.stringify(this.screen));
+          console.log(JSON.stringify(this.screens));
         }
       });
     }, function(error) {
       // onerror callback
     });
+
+    return this.screens;
   }
 
-  static splitEntries(entries) {
+  splitEntries(entries) {
     this.schemes = entries.filter((entry) => {
       return entry.filename.split('.')[1] == 'scm';
     });
@@ -29,7 +31,7 @@ export class AIAReader {
     });
   }
 
-  static fetchBlockData() {
+  fetchBlockData() {
     for(let blk of this.blocks) {
       blk.getData(new zip.TextWriter(), function(text) {
         this.screens.push({
@@ -40,7 +42,7 @@ export class AIAReader {
     }
   }
 
-  static fetchSchemeData() {
+  fetchSchemeData() {
     for(let scm of this.schemes) {
       scm.getData(new zip.TextWriter(), function(text) {
         this.screens.find(x => x.name == scm.filename.split('/').pop().split('.')[0]).screen.setScheme(text);
