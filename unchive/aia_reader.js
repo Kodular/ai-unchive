@@ -1,4 +1,4 @@
-class AIAReader {
+export class AIAReader {
   static read(blob) {
     // use a BlobReader to read the zip from a Blob object
     zip.createReader(new zip.BlobReader(blob), function(reader) {
