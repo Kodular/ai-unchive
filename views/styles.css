@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  font-family: Roboto;
 }
 
 .root-panel {
@@ -34,6 +35,10 @@ body {
 }
 
 .unchive-label {
-  font-family: Roboto;
   margin: 0;
+}
+
+.unchive-button {
+  border: 0;
+  box-shadow: none;
 }

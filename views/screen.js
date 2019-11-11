@@ -12,19 +12,20 @@ export class Screen extends View {
     this.titleBar.setStyleName('title-bar');
 
     this.logo = new Image('logo.png');
-    this.logo.setStyleName('title-bar__logo');
+    this.logo.addStyleName('title-bar__logo');
 
     this.title = new Label('Unchive');
-    this.title.setStyleName('title-bar__title');
+    this.title.addStyleName('title-bar__title');
 
     this.uploadButton = new Button('cloud_upload', true);
     this.uploadButton.addStyleName('title-bar__upload-button');
 
     this.titleBar.addView(this.logo);
     this.titleBar.addView(this.title);
+    this.titleBar.addView(this.uploadButton);
 
     this.addView(this.titleBar);
-    
+
     this.primaryNodeList = new NodeList();
     this.primaryNodeList.addStyleName('node-list--primary');
     this.addView(this.primaryNodeList);
