@@ -9,18 +9,9 @@ export class AIAReader {
         if (entries.length) {
           for(let entry of entries) {
             entry.getData(new zip.TextWriter(), function(text) {
-              /*switch (entry.filename.split('.')[1]) {
-                case 'bky':
-                screens.push({
-                  'name' : entry.filename.split('/').pop().split('.')[0],
-                  'screen' : new Screen('', text)
-                });
-                break;
-
-                case 'scm':
-                screens.find(x => x.name == entry.filename.split('/').pop().split('.')[0]).screen.setScheme(text);
-              }*/
               console.log(text);
+              if(entry.filename.split('.')[1] == 'bky') {
+
               }
               reader.close(function() {
                 // onclose callback
@@ -32,7 +23,5 @@ export class AIAReader {
     }, function(error) {
       // onerror callback
     });
-
-    return screens;
   }
 }
