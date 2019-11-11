@@ -52,7 +52,7 @@ export class Screen extends View {
     }
 
     this.req = getReqParams();
-    alert(this.req);
+    alert(JSON.stringify(this.req));
   }
 }
 
