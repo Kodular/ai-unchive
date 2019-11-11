@@ -18,7 +18,7 @@ export class Label extends View {
     super('P');
     this.addStyleName('unchive-label');
     if(text != null) {
-      isHTML ? setHTML(text) : setText(text);
+      isHTML ? this.setHTML(text) : this.setText(text);
     }
   }
 
