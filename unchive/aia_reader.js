@@ -12,7 +12,7 @@ export class AIAReader {
               reader.close(function() {
                 // onclose callback
               });
-            }
+            });
           }
         }
       });
