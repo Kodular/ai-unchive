@@ -7,7 +7,7 @@ export class Screen extends View {
     super('DIV');
 
     this.primaryNodeList = new NodeList();
-    addView(this.primaryNodeList);
+    this.addView(this.primaryNodeList);
 
     this.primaryNodeList.addView(new Node());
 
