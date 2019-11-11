@@ -9,7 +9,6 @@ export class AIAReader {
         if (entries.length) {
           this.splitEntries(entries);
           this.fetchBlockData(this.screens);
-          this.fetchSchemeData(this.screens);
 
           console.log(JSON.stringify(this.screens));
         }
@@ -40,6 +39,7 @@ export class AIAReader {
         })
       });
     }
+    this.fetchSchemeData(screens);
   }
 
   fetchSchemeData(screens) {
