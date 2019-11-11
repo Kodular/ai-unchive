@@ -35,6 +35,13 @@ body {
   flex-grow: 2;
 }
 
+.node-list-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
 .unchive-label {
   margin: 0;
 }

@@ -8,8 +8,27 @@ export class Screen extends View {
   constructor() {
     super('DIV');
 
-    this.titleBar = new View('DIV');
-    this.titleBar.setStyleName('title-bar');
+    this.titleBar = new TitleBar();
+    this.addView(this.titleBar);
+
+    this.nodeListContainer = new View('DIV');
+    this.nodeListContainer.addStyleName('node-list-container');
+
+    this.addView(this.nodeListContainer);
+
+    this.primaryNodeList = new NodeList();
+    this.primaryNodeList.addStyleName('node-list--primary');
+    this.nodeListContainer.addView(this.primaryNodeList);
+
+    this.primaryNodeList.addView(new Node());
+  }
+}
+
+class TitleBar extends View {
+  constructor() {
+    super('DIV');
+
+    this.setStyleName('title-bar');
 
     this.logo = new Image('logo.png');
     this.logo.addStyleName('title-bar__logo');
@@ -20,16 +39,8 @@ export class Screen extends View {
     this.uploadButton = new Button('cloud_upload', true);
     this.uploadButton.addStyleName('title-bar__upload-button');
 
-    this.titleBar.addView(this.logo);
-    this.titleBar.addView(this.title);
-    this.titleBar.addView(this.uploadButton);
-
-    this.addView(this.titleBar);
-
-    this.primaryNodeList = new NodeList();
-    this.primaryNodeList.addStyleName('node-list--primary');
-    this.addView(this.primaryNodeList);
-
-    this.primaryNodeList.addView(new Node());
+    this.addView(this.logo);
+    this.addView(this.title);
+    this.addView(this.uploadButton);
   }
 }
