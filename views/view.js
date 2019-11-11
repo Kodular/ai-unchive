@@ -30,4 +30,12 @@ export class View {
   getAttribute(attributeName) {
     this.domElement.getAttribute(attributeName);
   }
+
+  setVisible(visible) {
+    if(visible)
+      this.domElement.style.display = (this.cacheDisplayStyle == 'none') ? 'none' : this.cacheDisplayStyle;
+    else
+      this.cacheDisplayStyle = this.domElement.style.display;
+      this.domElement.style.display = 'none';
+  }
 }

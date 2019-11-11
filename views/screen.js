@@ -52,7 +52,14 @@ export class Screen extends View {
     }
 
     this.req = getReqParams();
-    alert(JSON.stringify(this.req));
+
+    if(this.req.url != undefined) {
+      AIAReader.read(url);
+    }
+
+    if(this.req.embedded == 'true') {
+      this.titleBar.setVisible(false);
+    }
   }
 }
 
