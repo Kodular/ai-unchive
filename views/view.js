@@ -1,4 +1,3 @@
-
 export class View {
   constructor(domElementName) {
       this.domElement = document.createElement(domElementName);
