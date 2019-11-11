@@ -1,3 +1,7 @@
+:root {
+  --primary: #4527A0;
+}
+
 body {
   margin: 0;
   font-family: Roboto;
@@ -31,6 +35,11 @@ body {
   font-size: 16px;
   font-weight: 500;
   flex-grow: 2;
+}
+
+.title-bar__upload-button i {
+  transform: rotateZ(180deg);
+  color: var(--primary);
 }
 
 .node-list-container {
