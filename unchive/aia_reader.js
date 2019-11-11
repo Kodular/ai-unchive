@@ -10,9 +10,10 @@ export class AIAReader {
           for(var entry of entries) {
             entry.getData(new zip.TextWriter(), function(text) {
               console.log(text);
+              alert(entry.filename);
               if(entry.filename.split('.')[1] == 'bky') {
                   //screens.append({})
-                  alert(entry.filename);
+
               }
               reader.close(function() {
                 // onclose callback
