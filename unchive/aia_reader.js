@@ -45,7 +45,9 @@ export class AIAReader {
   fetchSchemeData(screens) {
     for(let scm of this.schemes) {
       scm.getData(new zip.TextWriter(), function(text) {
-        screens.find(x => x.name == scm.filename.split('/').pop().split('.')[0]).screen.setScheme(text);
+        screens.find((x) => {
+          x.name == scm.filename.split('/').pop().split('.')[0];
+        }).screen.setScheme(text);
       });
     }
   }
