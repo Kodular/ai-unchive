@@ -19,7 +19,7 @@ export class AIAReader {
     });
   }
 
-  splitEntries(entries) {
+  static splitEntries(entries) {
     this.schemes = entries.filter((entry) => {
       return entry.filename.split('.')[1] == 'scm';
     });
@@ -29,7 +29,7 @@ export class AIAReader {
     });
   }
 
-  fetchBlockData() {
+  static fetchBlockData() {
     for(let blk of this.blocks) {
       blk.getData(new zip.TextWriter(), function(text) {
         this.screens.push({
@@ -40,7 +40,7 @@ export class AIAReader {
     }
   }
 
-  fetchSchemeData() {
+  static fetchSchemeData() {
     for(let scm of this.schemes) {
       scm.getData(new zip.TextWriter(), function(text) {
         this.screens.find(x => x.name == scm.filename.split('/').pop().split('.')[0]).screen.setScheme(text);
