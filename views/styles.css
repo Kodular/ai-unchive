@@ -47,6 +47,11 @@ body {
   height: 100%;
 }
 
+.node-list--primary,
+.node-list--secondary {
+  min-width: 300px;
+}
+
 .node-list--tertiary {
   flex-grow: 2;
 }

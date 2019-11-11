@@ -33,7 +33,7 @@ export class Screen extends View {
 }
 
 class TitleBar extends View {
-  constructor() {
+  async constructor() {
     super('DIV');
 
     this.setStyleName('title-bar');
