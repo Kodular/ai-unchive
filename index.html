@@ -9,8 +9,11 @@
   <body>
 
   </body>
+  <script type="text/javascript" src="/lib/zip.js"></script>
   <script type="module">
     import { Screen } from './views/screen.js';
+
+    zip.workerScriptsPath = "/lib/";
 
     let rootPanel = new Screen();
     rootPanel.setStyleName('root-panel');
