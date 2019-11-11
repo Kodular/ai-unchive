@@ -9,12 +9,12 @@ export class AIAReader {
         if (entries.length) {
           for(let entry of entries) {
             entry.getData(new zip.TextWriter(), function(text) {
-              console.log(text);
               switch (entry.filename.split('.')[1]) {
                 case 'bky':
                 screens.append({
                   'name' : entry.filename.split('/').pop().split('.')[0],
-                  'screen' : new Screen('', text);
+                  'screen' : new Screen('', text)
+                });
                 break;
 
                 case 'scm':
@@ -30,5 +30,7 @@ export class AIAReader {
     }, function(error) {
       // onerror callback
     });
+
+    return screens;
   }
 }
