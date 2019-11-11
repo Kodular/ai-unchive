@@ -7,7 +7,7 @@ export class AIAReader {
     zip.createReader(readerObj, (reader) => {
       reader.getEntries((entries) => {
         if (entries.length) {
-          for(var entry of entries) {
+          for(let entry of entries) {
             entry.getData(new zip.TextWriter(), function(text) {
               console.log(text);
               alert(entry.filename);
