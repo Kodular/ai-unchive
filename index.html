@@ -8,5 +8,11 @@
   <body>
 
   </body>
-  <script type="module" src="views/screen.js"></script>
+  <script type="module">
+    import { Screen } from './screen.js';
+    
+    let rootPanel = new Screen('aa');
+    rootPanel.setStyleName('root-panel');
+    document.body.appendChild(rootPanel.domElement);
+  </script>
 </html>
