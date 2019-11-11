@@ -3,7 +3,6 @@ import { View } from './view.js'
 export class Image extends View {
   constructor(source) {
     super('IMG');
-    this.source = undefined;
     if(source != null) {
       this.setSource(source);
     }
@@ -17,13 +16,9 @@ export class Image extends View {
 export class Label extends View {
   constructor(text, isHTML) {
     super('P');
-    this.text = undefined;
+    this.addStyleName('unchive-label');
     if(text != null) {
-      if(isHTML) {
-        this.setHTML(text);
-      } else {
-        this.setText(text);
-      }
+      isHTML ? setHTML(text) : setText(text);
     }
   }
 
@@ -35,5 +30,21 @@ export class Label extends View {
   setHTML(html) {
     this.domElement.innerHTML = html;
     this.text = html;
+  }
+}
+
+export class Button extends View {
+  constructor(text, isIconButton) {
+      super('BUTTON');
+      this.addStyleName(isIconButton ? 'unchive-button unchive-button--icon' : 'unchive-button');
+      this.isIconButton = isIconButton;
+      if(text != null) {
+        this.setHTML(text);
+      }
+  }
+
+  setHTML(text) {
+      this.domElement.innerHTML = isIconButton ? '<i class="material-icons">' + text + '</>' : text;
+      this.text = text;
   }
 }
