@@ -4,6 +4,8 @@ import { Image, Label, Button } from './widgets.js'
 import { Node } from './nodes/node.js'
 import { NodeList } from './nodes/node_list.js'
 
+import { AIAReader } from '../unchive/aia_reader.js'
+
 export class Screen extends View {
   constructor() {
     super('DIV');
@@ -29,11 +31,25 @@ export class Screen extends View {
     this.nodeListContainer.addView(this.tertiaryNodeList);
 
     this.primaryNodeList.addView(new Node());
+
+    this.handleURLData();
   }
+
+  async handleURLData() {
+    this.req = decodeURI(window.location.search)
+                .replace('?', '')
+                .split('&')
+                .map(param => param.split('='))
+                .reduce((values, [ key, value ]) => {
+                  values[ key ] = value;
+                  return values;
+                }, {})
+              };
+    alert(this.req);
 }
 
 class TitleBar extends View {
-  async constructor() {
+  constructor() {
     super('DIV');
 
     this.setStyleName('title-bar');
