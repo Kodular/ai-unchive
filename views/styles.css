@@ -38,7 +38,6 @@ body {
 }
 
 .title-bar__upload-button i {
-  transform: rotateZ(180deg);
   color: var(--primary);
 }
 

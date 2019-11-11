@@ -75,7 +75,7 @@ class TitleBar extends View {
     this.title = new Label('Unchive');
     this.title.addStyleName('title-bar__title');
 
-    this.uploadButton = new Button('get_app', true);
+    this.uploadButton = new Button('unarchive', true);
     this.uploadButton.addStyleName('title-bar__upload-button');
 
     this.addView(this.logo);
