@@ -20,6 +20,14 @@ export class Screen extends View {
     this.primaryNodeList.addStyleName('node-list--primary');
     this.nodeListContainer.addView(this.primaryNodeList);
 
+    this.secondaryNodeList = new NodeList();
+    this.secondaryNodeList.addStyleName('node-list--secondary');
+    this.nodeListContainer.addView(this.secondaryNodeList);
+
+    this.tertiaryNodeList = new NodeList();
+    this.tertiaryNodeList.addStyleName('node-list--tertiary');
+    this.nodeListContainer.addView(this.tertiaryNodeList);
+
     this.primaryNodeList.addView(new Node());
   }
 }

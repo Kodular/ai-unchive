@@ -10,7 +10,6 @@ body {
   flex-wrap: nowrap;
   align-content: stretch;
   flex-direction: column;
-  background-color: gold;
 }
 
 .title-bar {
@@ -19,7 +18,6 @@ body {
   align-items: center;
   padding: 0 20px;
   height: 50px;
-  background-color: #FFF;
   border-bottom: 1px solid #DDD;
 }
 
@@ -40,6 +38,17 @@ body {
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: stretch;
+  width: 100vw;
+  height: calc(100vh - 50px);
+}
+
+.node-list {
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.node-list--tertiary {
+  flex-grow: 2;
 }
 
 .unchive-label {
