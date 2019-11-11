@@ -45,7 +45,7 @@ export class Button extends View {
   }
 
   setHTML(text) {
-      this.domElement.innerHTML = isIconButton ? '<i class="material-icons">' + text + '</>' : text;
+      this.domElement.innerHTML = this.isIconButton ? '<i class="material-icons">' + text + '</>' : text;
       this.text = text;
   }
 }
