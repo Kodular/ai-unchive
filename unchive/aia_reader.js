@@ -9,9 +9,9 @@ export class AIAReader {
         if (entries.length) {
           for(let entry of entries) {
             entry.getData(new zip.TextWriter(), function(text) {
-              switch (entry.filename.split('.')[1]) {
+              /*switch (entry.filename.split('.')[1]) {
                 case 'bky':
-                screens.append({
+                screens.push({
                   'name' : entry.filename.split('/').pop().split('.')[0],
                   'screen' : new Screen('', text)
                 });
@@ -19,6 +19,8 @@ export class AIAReader {
 
                 case 'scm':
                 screens.find(x => x.name == entry.filename.split('/').pop().split('.')[0]).screen.setScheme(text);
+              }*/
+              console.log(text);
               }
               reader.close(function() {
                 // onclose callback
