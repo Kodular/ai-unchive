@@ -1,6 +1,6 @@
 import { View } from './view.js'
 
-class Screen extends View {
+export class Screen extends View {
   constructor() {
     super('DIV');
   }
