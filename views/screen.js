@@ -10,8 +10,6 @@ export class Screen extends View {
   constructor() {
     super('DIV');
 
-    this.req = '';
-
     this.titleBar = new TitleBar();
     this.addView(this.titleBar);
 
@@ -38,16 +36,24 @@ export class Screen extends View {
   }
 
   async handleURLData() {
-    this.req = decodeURI(window.location.search)
-                .replace('?', '')
-                .split('&')
-                .map(param => param.split('='))
-                .reduce((values, [ key, value ]) => {
-                  values[ key ] = value;
-                  return values;
-                }, {})
-              };
+    function getReqParams() {
+          var paramString = window.location.search.substr(1);
+          return paramString != null && paramString != "" ? makeArray(paramString) : {};
+    }
+
+    function makeArray(paramString) {
+        var params = {};
+        var paramArray = paramString.split("&");
+        for ( var i = 0; i < paramArray.length; i++) {
+            var tempArr = paramArray[i].split("=");
+            params[tempArr[0]] = tempArr[1];
+        }
+        return params;
+    }
+
+    this.req = getReqParams();
     alert(this.req);
+  }
 }
 
 class TitleBar extends View {
