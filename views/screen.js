@@ -10,6 +10,8 @@ export class Screen extends View {
   constructor() {
     super('DIV');
 
+    this.req = '';
+
     this.titleBar = new TitleBar();
     this.addView(this.titleBar);
 
