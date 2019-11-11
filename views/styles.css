@@ -50,14 +50,14 @@ body {
 
 .unchive-button--icon i {
   font-size: 20px;
+  padding: 10px;
 }
 
 .unchive-button--icon {
   border-radius: 3600px;
-  padding: 20px;
   transition: background 0.2s;
 }
 
 .unchive-button--icon:hover {
-  background-color: rgba(200, 200, 200, 0.1);
+  background-color: rgba(200, 200, 200, 0.4);
 }
