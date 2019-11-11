@@ -10,4 +10,8 @@ export class View {
   removeStyleName(styleName) {
       this.domElement.classList.remove(styleName);
   }
+
+  addView(view) {
+    this.domElement.appendChild(view.domElement);
+  }
 }
