@@ -8,8 +8,8 @@ export class AIAReader {
       reader.getEntries((entries) => {
         if (entries.length) {
           this.splitEntries(entries);
-          this.fetchBlockData();
-          this.fetchSchemeData();
+          this.fetchBlockData(this.screens);
+          this.fetchSchemeData(this.screens);
 
           console.log(JSON.stringify(this.screens));
         }
@@ -31,10 +31,10 @@ export class AIAReader {
     });
   }
 
-  fetchBlockData() {
+  fetchBlockData(screens) {
     for(let blk of this.blocks) {
       blk.getData(new zip.TextWriter(), function(text) {
-        this.screens.push({
+        screens.push({
           'name' : blk.split('/').pop().split('.')[0],
           'screen' : new Screen('', text)
         })
@@ -42,11 +42,10 @@ export class AIAReader {
     }
   }
 
-  fetchSchemeData() {
+  fetchSchemeData(screens) {
     for(let scm of this.schemes) {
       scm.getData(new zip.TextWriter(), function(text) {
-        //this.screens.find(x => x.name == scm.filename.split('/').pop().split('.')[0]).screen.setScheme(text);
-        alert(this.screens);
+        screens.find(x => x.name == scm.filename.split('/').pop().split('.')[0]).screen.setScheme(text);
       });
     }
   }
