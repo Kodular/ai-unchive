@@ -36,7 +36,8 @@ export class Label extends View {
 export class Button extends View {
   constructor(text, isIconButton) {
       super('BUTTON');
-      this.addStyleName(isIconButton ? 'unchive-button unchive-button--icon' : 'unchive-button');
+      this.addStyleName('unchive-button');
+      if(isIconButton) this.addStyleName('unchive-button--icon');
       this.isIconButton = isIconButton;
       if(text != null) {
         this.setHTML(text);
