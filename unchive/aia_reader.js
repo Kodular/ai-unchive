@@ -1,56 +1,59 @@
-import { Screen } from './screen.js'
+import { AIProject, AIScreen } from './ai_project.js'
 
 export class AIAReader {
   read(content) {
-    this.screens = [];
     var readerObj = content instanceof Blob ? new zip.BlobReader(content) : new zip.HttpReader(content);
     zip.createReader(readerObj, (reader) => {
       reader.getEntries((entries) => {
         if (entries.length) {
-          this.splitEntries(entries);
+          var screens = generateScreens(entries.filter((x) => {
+            return this.getFileType(file) == 'scm' || this.getFileType(file) == 'blk';
+          }));
 
-          console.log(JSON.stringify(this.schemes));
-          this.fetchBlockData(this.screens);
-          this.fetchSchemeData(this.screens);
-
-          console.log(JSON.stringify(this.screens));
+          console.log(JSON.stringify(screens));
         }
       });
     }, function(error) {
       // onerror callback
     });
-
-    return this.screens;
   }
 
-  splitEntries(entries) {
-    this.schemes = entries.filter((entry) => {
-      return entry.filename.split('.')[1] == 'scm';
-    });
+  generateScreens(files) {
+    var schemes = [];
+    var blocks = [];
 
-    this.blocks = entries.filter((entry) => {
-      return entry.filename.split('.')[1] == 'blk';
-    });
-  }
+    var screens = [];
 
-  fetchBlockData(screens) {
-    for(let blk of this.blocks) {
-      blk.getData(new zip.TextWriter(), function(text) {
-        screens.push({
-          'name' : blk.split('/').pop().split('.')[0],
-          'screen' : new Screen('', text)
-        })
+    for(let file of files) {
+      file.getData(new zip.TextWriter(), function(content) {
+        if(this.getFileType(file) == 'scm') {
+          schemes.push({
+            'name' : this.getFileName(file),
+            'scm' : text
+          });
+        } else if(this.getFileType(file) == 'blk') {
+          blocks.push({
+            'name' : this.getFileName(file),
+            'blk' : text
+          });
+        }
       });
     }
+
+    for(let scheme of schemes) {
+      screens.push(new AIScreen(scheme.scm, blocks.find((x) => {
+        return x.name == scheme.name;
+      }).blk));
+    }
+
+    return screens;
   }
 
-  fetchSchemeData(screens) {
-    for(let scm of this.schemes) {
-      scm.getData(new zip.TextWriter(), function(text) {
-        screens.find((x) => {
-          x.name == scm.filename.split('/').pop().split('.')[0];
-        }).screen.setScheme(text);
-      });
-    }
+  getFileType(file) {
+    return file.filename.split('.')[1];
+  }
+
+  getFileName(file) {
+    return file.filename.split('/').pop().split('.')[0];
   }
 }
