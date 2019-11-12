@@ -9,10 +9,11 @@ export class AIProject {
     if(screen instanceof AIScreen)
       this.screens.push(screen);
     else
-      throw new TypeError('Attempt to add non-screen object to AIProject');
+      throw new TypeError('Attempt to add ' + typeof screen + ' object to AIProject');
   }
 
   addScreens(screensArray) {
+    console.log(typeof(screensArray))
     for(let screen of screensArray)
       this.addScreen(screen);
   }
@@ -21,21 +22,21 @@ export class AIProject {
     if(screen instanceof AIScreen)
       ;// TODO: Add splice code
     else
-      throw new TypeError('Attempt to remove non-screen object from AIProject');
+      throw new TypeError('Attempt to remove ' + typeof screen + ' object from AIProject');
   }
 
   addAsset(asset) {
     if(screen instanceof AIAsset)
       this.assets.push(asset);
     else
-      throw new TypeError('Attempt to add non-asset object to AIProject');
+      throw new TypeError('Attempt to add ' + typeof asset + ' object to AIProject');
   }
 
   addExtension(extension) {
     if(extension instanceof AIExtension)
       this.extensions.push(extension);
     else
-      throw new TypeError('Attempt to add non-extension object to AIProject');
+      throw new TypeError('Attempt to add ' + typeof extension + ' object to AIProject');
   }
 
   generateSummary() {
@@ -106,6 +107,6 @@ class Component {
     if(component instanceof Component)
       this.children.push(component);
     else
-      throw new TypeError('Attempt to add non-component to component.');
+      throw new TypeError('Attempt to add ' + typeof component + ' to Component.');
   }
 }
