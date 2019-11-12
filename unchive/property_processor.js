@@ -19,5 +19,6 @@ this.addEventListener('message', function(e) {
       });
   }
   this.postMessage({'properties' : properties});
-}catch(e){;}
+  }catch(e){;}
+  this.postMessage({'properties' : []});
 }, false);
