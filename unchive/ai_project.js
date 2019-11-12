@@ -52,21 +52,61 @@ export class AIScreen {
       throw new Exception('Screen name cannot be null!');
   }
 
-  generateSchemeData(scmJson) {
-    this.components = JSON.parse(scmJson.substring(9, scmJson.length - 3));
+  generateSchemeData(scmJSON) {
+    var componentsJSON = JSON.parse(scmJSON.substring(9, scmJSON.length - 3));
+    this.components = this.generateComponent(componentsJSON.Properties);
+  }
+
+  generateComponent(componentJSON) {
+    var components = [];
+    var component = new Component(
+      componentJSON.$Name,
+      componentJSON.$Type,
+      componentJSON.Uuid || 0, //Screens do not have a Uuid property.
+      componentJSON);
+    components.push(component);
+    for(let childComponent of componentJSON.$Components || []) {
+      component.addChild(this.generateComponent(childComponent));
+    }
+    return components;
   }
 
   generateBlocks(blkXml) {
     // TODO: convert xml to json, and then to block objects
-    var blockJson = xml2json(new DOMParser().parseFromString(blkXml, 'text/xml')).replace(' undefined', '');
-    this.blocks = blockJson;
+    this.blocks = new DOMParser().parseFromString(blkXml, 'text/xml');
   }
 }
 
 class Component {
-  constructor(name, type, uid) {
+  constructor(name, type, uid, propertiesJSON) {
     this.name = name;
     this.type = type;
     this.uid = uid;
+    this.children = [];
+
+    loadProperties(propertiesJSON);
+
+    this.package = 'com.google.appinventor.components.runtime';
+    this.customDescriptorJSON = null;
+  }
+
+  loadProperties(properties) {
+    var propertyLoader = Worker('property_processor.js');
+    propertyLoader.postMessage({
+      'type' : this.package + '.' + this.type,
+      'propertyJSON' : properties,
+      'customJSON' : this.customDescriptorJSON
+    });
+    propertyLoader.addEventListener('message' (event) => {
+      this.properties = event.data.properties;
+      propertyLoader.terminate();
+    })
+  }
+
+  addChild(component) {
+    if(component instanceof Component)
+      this.children.push(component);
+    else
+      throw new Exception('Attempt to add non-component to component.');
   }
 }

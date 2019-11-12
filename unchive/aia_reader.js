@@ -1,7 +1,7 @@
 import { AIProject, AIScreen } from './ai_project.js'
 
 export class AIAReader {
-  read(content) {
+  static read(content) {
     var readerObj = content instanceof Blob ? new zip.BlobReader(content) : new zip.HttpReader(content);
     zip.createReader(readerObj, (reader) => {
       reader.getEntries((entries) => {
@@ -16,9 +16,11 @@ export class AIAReader {
     }, function(error) {
       // onerror callback
     });
+
+    return new AIProject().addScreens(screens);
   }
 
-  async generateScreens(files) {
+  static async generateScreens(files) {
     var schemes = [];
     var blocks = [];
 
@@ -48,7 +50,7 @@ export class AIAReader {
     return screens;
   }
 
-  getFileContent(file) {
+  static getFileContent(file) {
     return new Promise((resolve, reject) => {
       file.getData(new zip.TextWriter(), (content) => {
         resolve(content);
@@ -56,11 +58,11 @@ export class AIAReader {
     });
   }
 
-  getFileType(file) {
+  static getFileType(file) {
     return file.filename.split('.')[1];
   }
 
-  getFileName(file) {
+  static getFileName(file) {
     return file.filename.split('/').pop().split('.')[0];
   }
 }
