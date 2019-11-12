@@ -96,12 +96,11 @@ class Component {
       AIProject.descriptorJSON = await DescriptorGenerator.generate();
     }
 
-    //console.log('Loading properties of ' + this.name);
-    console.log(this.type + '===' + AIProject.descriptorJSON.filter(x => x.type == this.package + '.' + this.type));
+    console.log('Loading properties of ' + this.name);
     var propertyLoader = new Worker('unchive/property_processor.js');
     propertyLoader.postMessage({
       'propertyJSON' : properties,
-      'descriptorJSON' : (this.customDescriptorJSON || AIProject.descriptorJSON).filter(x => x.type == this.package + '.' + this.type).properties
+      'descriptorJSON' : (this.customDescriptorJSON || AIProject.descriptorJSON).filter(x => x.type == this.package + '.' + this.type).properties || []
     });
     propertyLoader.addEventListener('message', (event) => {
       this.properties = event.data.properties;
