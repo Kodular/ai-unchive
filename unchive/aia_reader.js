@@ -40,6 +40,8 @@ export class AIAReader {
       });
     }
 
+    console.log(schemes[1].name + schemes[0].name);
+
     for(let scheme of schemes) {
       screens.push(new AIScreen(
         scheme.scm,
