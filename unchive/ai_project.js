@@ -97,7 +97,7 @@ class Component {
       'propertyJSON' : properties,
       'customJSON' : this.customDescriptorJSON
     });
-    propertyLoader.addEventListener('message' (event) => {
+    propertyLoader.addEventListener('message', (event) => {
       this.properties = event.data.properties;
       propertyLoader.terminate();
     })
