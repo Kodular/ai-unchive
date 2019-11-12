@@ -94,9 +94,12 @@ class Component {
 
   async loadProperties(properties) {
     if(AIProject.descriptorJSON == undefined) {
-      AIProject.descriptorJSON = await DescriptorGenerator.generate();
+      let response = await fetch('unchive/simple_components.json');
+      //AIProject.descriptorJSON = await DescriptorGenerator.generate();
+      AIProject.descriptorJSON = await response.json();
+      console.log(descriptorJSON);
     }
-    
+
     console.log('Loading properties of ' + properties.$Name);
     var propertyLoader = new Worker('unchive/property_processor.js');
     propertyLoader.postMessage({
