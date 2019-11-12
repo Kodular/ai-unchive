@@ -12,7 +12,7 @@ export class AIAReader {
           );
 
           console.log(screens);
-          //return new AIProject().addScreens(screens); // TODO: 
+          //return new AIProject().addScreens(screens); // TODO:
         }
       });
     }, function(error) {
@@ -48,6 +48,19 @@ export class AIAReader {
         scheme.name));
     }
     return screens;
+  }
+
+  static async generateExtensions(files) {
+    var extensions = [];
+
+    for(let file of files) {
+      console.log(file.fileName.split('/'))
+      var content = await this.getFileContent(file);
+      extensions.push({
+        'name' : file.fileName.split('/')[0]
+        'descriptorJson' : content
+      });
+    }
   }
 
   static getFileContent(file) {
