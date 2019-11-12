@@ -43,12 +43,12 @@ export class AIAReader {
     for(let scheme of schemes) {
       screens.push(new AIScreen(scheme.scm, blocks.find((x) => {
         return x.name == scheme.name;
-      }).blk));
+      }).blk, scheme.name));
     }
 
 
-    for(let s of screens) {
-      console.log('aa' + s.scheme);
+    for(let s of schemes) {
+      console.log('aa' + s.scm);
     }
     return screens;
   }

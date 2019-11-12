@@ -44,9 +44,12 @@ export class AIProject {
 }
 
 export class AIScreen {
-  constructor(scheme, blocks) {
+  constructor(scheme, blocks, name) {
     this.scheme = scheme;
     this.blocks = blocks;
+    this.name = name;
+    if(name == null)
+      throw new Exception('Screen name cannot be null!');
   }
 
   setBlk(blocks) {
