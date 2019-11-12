@@ -31,7 +31,6 @@ export class AIAReader {
             'name' : this.getFileName(file),
             'scm' : content
           });
-          alert(schemes);
         } else if(this.getFileType(file) == 'blk') {
           blocks.push({
             'name' : this.getFileName(file),
@@ -46,11 +45,11 @@ export class AIAReader {
         return x.name == scheme.name;
       }).blk));
     }
-    console.log(JSON.stringify(screens));
-    console.log('schemes:');
-    console.log(JSON.stringify(schemes));
-    console.log('bloks:');
-    console.log(JSON.stringify(blocks));
+
+
+    for(let s of screens) {
+      console.log(s.scheme);
+    }
     return screens;
   }
 
