@@ -15,5 +15,5 @@ this.addEventListener('message', function(e) {
         'value' : property.defaultValue
       });
   }
-  this.postMessage({'properties' : properties});
+  this.postMessage({'properties' : [1, 2, 3]});
 }, false);
