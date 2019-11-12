@@ -11,13 +11,12 @@ export class AIAReader {
           );
 
           console.log(screens);
+          return new AIProject().addScreens(screens);
         }
       });
     }, function(error) {
       // onerror callback
     });
-
-    return new AIProject().addScreens(screens);
   }
 
   static async generateScreens(files) {

@@ -84,7 +84,7 @@ class Component {
     this.uid = uid;
     this.children = [];
 
-    loadProperties(propertiesJSON);
+    this.loadProperties(propertiesJSON);
 
     this.package = 'com.google.appinventor.components.runtime';
     this.customDescriptorJSON = null;
