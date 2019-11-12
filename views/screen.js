@@ -6,6 +6,8 @@ import { NodeList } from './nodes/node_list.js'
 
 import { AIAReader } from '../unchive/aia_reader.js'
 
+import { AIProject } from '../unchive/aia_project.js'
+
 export class Screen extends View {
   constructor() {
     super('DIV');
