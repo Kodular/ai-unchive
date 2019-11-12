@@ -85,11 +85,10 @@ class Component {
     this.type = type;
     this.uid = uid;
     this.children = [];
-
-    this.loadProperties(propertiesJSON);
-
     this.package = 'com.google.appinventor.components.runtime';
     this.customDescriptorJSON = null;
+
+    this.loadProperties(propertiesJSON);
   }
 
   async loadProperties(properties) {
@@ -97,11 +96,7 @@ class Component {
       AIProject.descriptorJSON = await DescriptorGenerator.generate();
     }
 
-    //console.log('Loading properties of ' + this.name);
-    var tval = AIProject.descriptorJSON.filter((x) => {
-      console.log(x.type + '===' + this.package + '.' + this.type);
-      return x.type == this.package + '.' + this.type;
-    });
+    console.log('Loading properties of ' + this.name);
     var propertyLoader = new Worker('unchive/property_processor.js');
     propertyLoader.postMessage({
       'propertyJSON' : properties,
