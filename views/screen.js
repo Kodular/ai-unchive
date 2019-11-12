@@ -99,4 +99,4 @@ function loadDescriptorJSON(callback) {
     xobj.send(null);
  }
 
- loadDescriptorJSON(data => {AIProject.descriptorJSON = data})
+ loadDescriptorJSON(data => {AIProject.descriptorJSON = JSON.parse(data)})
