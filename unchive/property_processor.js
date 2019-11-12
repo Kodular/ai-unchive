@@ -3,6 +3,7 @@ this.addEventListener('message', function(e) {
   var descriptorJSON = e.data.descriptorJSON;
 
   var properties = [];
+  console.log(descriptorJSON);
   for(let property of descriptorJSON) {
     console.log(property.name);
     if(propertyJSON.hasOwnProperty(property.name))
