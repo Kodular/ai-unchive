@@ -97,7 +97,7 @@ class Component {
       AIProject.descriptorJSON = await DescriptorGenerator.generate();
     }
 
-    console.log('Loading properties of ' + properties.$Name);
+    //console.log('Loading properties of ' + properties.$Name);
     var propertyLoader = new Worker('unchive/property_processor.js');
     propertyLoader.postMessage({
       'propertyJSON' : properties,
