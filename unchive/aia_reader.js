@@ -69,7 +69,7 @@ export class AIAReader {
 export class DescriptorGenerator {
   static generate() {
     return new Promise((resolve, reject) => {
-      fetch(res => {
+      fetch((res) => {
         resolve(JSON.parse(res));
       })
     })
