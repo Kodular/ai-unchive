@@ -6,9 +6,9 @@ export class AIAReader {
     zip.createReader(readerObj, (reader) => {
       reader.getEntries((entries) => {
         if (entries.length) {
-          var screens = this.generateScreens(entries.filter((x) => {
-            return this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk';
-          }));
+          var screens = this.generateScreens(
+            entries.filter(x => return this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk')
+          );
 
           console.log(screens);
         }
@@ -31,19 +31,22 @@ export class AIAReader {
             'name' : this.getFileName(file),
             'scm' : content
           });
+          alert(JSON.stringify(schemes));
         } else if(this.getFileType(file) == 'blk') {
           blocks.push({
             'name' : this.getFileName(file),
             'blk' : content
           });
+          alert('bbb<br>' + JSON.stringify(blocks));
         }
       });
     }
 
     for(let scheme of schemes) {
-      screens.push(new AIScreen(scheme.scm, blocks.find((x) => {
-        return x.name == scheme.name;
-      }).blk, scheme.name));
+      screens.push(new AIScreen(
+        scheme.scm,
+        blocks.find(x => return x.name == scheme.name).blk,
+        scheme.name));
     }
 
 
