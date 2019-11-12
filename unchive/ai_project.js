@@ -91,7 +91,7 @@ class Component {
   }
 
   loadProperties(properties) {
-    console.log(typeof AIProject.descriptorJSON)
+    console.log(AIProject.descriptorJSON instanceof Array);
     console.log('Loading properties of ' + properties.$Name);
     var propertyLoader = new Worker('unchive/property_processor.js');
     propertyLoader.postMessage({
