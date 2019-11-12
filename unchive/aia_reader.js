@@ -7,7 +7,7 @@ export class AIAReader {
       reader.getEntries((entries) => {
         if (entries.length) {
           var screens = this.generateScreens(entries.filter((x) => {
-            return this.getFileType(file) == 'scm' || this.getFileType(file) == 'blk';
+            return this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk';
           }));
 
           console.log(JSON.stringify(screens));
