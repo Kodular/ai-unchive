@@ -4,6 +4,7 @@ this.addEventListener('message', function(e) {
 
   var properties = [];
   for(let property of descriptorJSON) {
+    console.log(property.name);
     if(propertyJSON.hasOwnProperty(property.name))
       properties.push({
         'name' : property.name,
@@ -15,5 +16,5 @@ this.addEventListener('message', function(e) {
         'value' : property.defaultValue
       });
   }
-  this.postMessage({'properties' : [1, 2, 3]});
+  this.postMessage({'properties' : properties});
 }, false);
