@@ -69,13 +69,13 @@ export class AIAReader {
 export class DescriptorGenerator {
   static generate() {
     return new Promise((resolve, reject) => {
-      fetch((res) => {
+      this.fetchJSON((res) => {
         resolve(JSON.parse(res));
       })
     })
   }
 
-  static fetch(callback) {
+  static fetchJSON(callback) {
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
     xobj.open('GET', 'unchive/simple_components.json', true);
