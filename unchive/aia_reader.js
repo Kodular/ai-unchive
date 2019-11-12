@@ -25,10 +25,11 @@ export class AIAReader {
     var screens = [];
 
     for(let file of files) {
+      alert(file.filename);
       file.getData(new zip.TextWriter(), (content) => {
         if(this.getFileType(file) == 'scm') {
           schemes.push({
-            'name' : file.filename.split('/').pop().split('.')[0],
+            'name' : this.getFileName(file),
             'scm' : content
           });
           console.log(this.getFileType(file) + JSON.stringify(schemes));
