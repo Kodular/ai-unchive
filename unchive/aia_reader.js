@@ -18,7 +18,7 @@ export class AIAReader {
     });
   }
 
-  generateScreens(files) {
+  async generateScreens(files) {
     var schemes = [];
     var blocks = [];
 
