@@ -10,7 +10,7 @@ export class AIAReader {
             return this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk';
           }));
 
-          console.log(JSON.stringify(screens));
+          console.log(screens);
         }
       });
     }, function(error) {
@@ -27,11 +27,11 @@ export class AIAReader {
     for(let file of files) {
       file.getData(new zip.TextWriter(), (content) => {
         if(this.getFileType(file) == 'scm') {
-          alert(this.getFileName(file));
           schemes.push({
             'name' : this.getFileName(file),
             'scm' : content
           });
+          alert(schemes);
         } else if(this.getFileType(file) == 'blk') {
           blocks.push({
             'name' : this.getFileName(file),
