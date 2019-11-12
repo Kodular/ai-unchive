@@ -6,8 +6,6 @@ import { NodeList } from './nodes/node_list.js'
 
 import { AIAReader } from '../unchive/aia_reader.js'
 
-import { AIProject } from '../unchive/ai_project.js'
-
 export class Screen extends View {
   constructor() {
     super('DIV');
@@ -85,18 +83,3 @@ class TitleBar extends View {
     this.addView(this.uploadButton);
   }
 }
-
-function loadDescriptorJSON(callback) {
-    var xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
-    xobj.open('GET', 'unchive/simple_components.json', true);
-    xobj.onreadystatechange = function () {
-      if (xobj.readyState == 4 && xobj.status == "200") {
-        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-        callback(xobj.responseText);
-      }
-    };
-    xobj.send(null);
- }
-
- loadDescriptorJSON(data => {AIProject.descriptorJSON = JSON.parse(data)})

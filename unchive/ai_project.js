@@ -1,3 +1,5 @@
+import { DescriptorGenerator } from '../unchive/aia_reader.js'
+
 export class AIProject {
   constructor() {
     this.screens = [];
@@ -90,8 +92,11 @@ class Component {
     this.customDescriptorJSON = null;
   }
 
-  loadProperties(properties) {
-    console.log(AIProject.descriptorJSON instanceof String);
+  async loadProperties(properties) {
+    if(AIProject.descriptorJSON == undefined) {
+      AIProject.descriptorJSON = await DescriptorGenerator.generate();
+    }
+    
     console.log('Loading properties of ' + properties.$Name);
     var propertyLoader = new Worker('unchive/property_processor.js');
     propertyLoader.postMessage({
