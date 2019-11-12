@@ -44,24 +44,21 @@ export class AIProject {
 }
 
 export class AIScreen {
-  constructor(scheme, blocks, name) {
-    this.scheme = scheme;
-    this.blocks = blocks;
+  constructor(scm, blk, name) {
+    this.generateSchemeData(scm);
+    this.generateBlocks(blk);
     this.name = name;
     if(name == null)
       throw new Exception('Screen name cannot be null!');
   }
 
-  setBlk(blocks) {
-    this.blocks = blocks;
-    this.generateBlockData();
+  generateSchemeData(scmJson) {
+    this.components = JSON.parse(scmJson.substring(9, scmJson.length - 9));
   }
 
-  setScm(scheme) {
-    this.scheme = scheme;
-  }
-
-  generateBlockData() {
+  generateBlocks(blkXml) {
     // TODO: convert xml to json, and then to block objects
+    var blockJson = xmlToJson.parse(this.blocks);
+    this.blocks = blockJson;
   }
 }
