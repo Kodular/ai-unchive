@@ -27,6 +27,7 @@ export class AIAReader {
     for(let file of files) {
       file.getData(new zip.TextWriter(), (content) => {
         if(this.getFileType(file) == 'scm') {
+          alert(this.getFileName(file));
           schemes.push({
             'name' : this.getFileName(file),
             'scm' : content
@@ -49,7 +50,7 @@ export class AIAReader {
     console.log('schemes:');
     console.log(JSON.stringify(schemes));
     console.log('bloks:');
-    console.log(JSON.stringify(schemes));
+    console.log(JSON.stringify(blocks));
     return screens;
   }
 
