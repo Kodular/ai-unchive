@@ -9,7 +9,7 @@ export class AIProject {
     if(screen instanceof AIScreen)
       this.screens.push(screen);
     else
-      throw new Exception('Attempt to add non-screen object to AIProject');
+      throw new TypeError('Attempt to add non-screen object to AIProject');
   }
 
   addScreens(screensArray) {
@@ -21,21 +21,21 @@ export class AIProject {
     if(screen instanceof AIScreen)
       ;// TODO: Add splice code
     else
-      throw new Exception('Attempt to remove non-screen object from AIProject');
+      throw new TypeError('Attempt to remove non-screen object from AIProject');
   }
 
   addAsset(asset) {
     if(screen instanceof AIAsset)
       this.assets.push(asset);
     else
-      throw new Exception('Attempt to add non-asset object to AIProject');
+      throw new TypeError('Attempt to add non-asset object to AIProject');
   }
 
   addExtension(extension) {
     if(extension instanceof AIExtension)
       this.extensions.push(extension);
     else
-      throw new Exception('Attempt to add non-extension object to AIProject');
+      throw new TypeError('Attempt to add non-extension object to AIProject');
   }
 
   generateSummary() {
@@ -49,7 +49,7 @@ export class AIScreen {
     this.generateBlocks(blk);
     this.name = name;
     if(name == null)
-      throw new Exception('Screen name cannot be null!');
+      throw new TypeError('Screen name cannot be null!');
   }
 
   generateSchemeData(scmJSON) {
@@ -91,7 +91,8 @@ class Component {
   }
 
   loadProperties(properties) {
-    var propertyLoader = new Worker('property_processor.js');
+    console.log('Loading properties of' + properties.$Name);
+    var propertyLoader = new Worker('unchive/property_processor.js');
     propertyLoader.postMessage({
       'type' : this.package + '.' + this.type,
       'propertyJSON' : properties,
@@ -107,6 +108,6 @@ class Component {
     if(component instanceof Component)
       this.children.push(component);
     else
-      throw new Exception('Attempt to add non-component to component.');
+      throw new TypeError('Attempt to add non-component to component.');
   }
 }
