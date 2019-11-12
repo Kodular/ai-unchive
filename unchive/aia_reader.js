@@ -1,7 +1,7 @@
 import { AIProject, AIScreen } from './ai_project.js'
 
 export class AIAReader {
-  static read(content) {
+  static async read(content) {
     AIProject.descriptorJSON = await DescriptorGenerator.generate();
     var readerObj = content instanceof Blob ? new zip.BlobReader(content) : new zip.HttpReader(content);
     zip.createReader(readerObj, (reader) => {
