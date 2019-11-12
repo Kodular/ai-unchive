@@ -58,7 +58,7 @@ export class AIScreen {
 
   generateBlocks(blkXml) {
     // TODO: convert xml to json, and then to block objects
-    var blockJson = xml2json(new DOMParser().parseFromString(blkXml, 'text/xml'));
-    this.blocks = blockJson;
+    var blockJson = xml2json(new DOMParser().parseFromString(blkXml, 'text/xml')).replace(' undefined', '');
+    this.blocks = JSON.parse(blockJson);
   }
 }
