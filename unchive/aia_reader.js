@@ -25,7 +25,7 @@ export class AIAReader {
     var screens = [];
 
     for(let file of files) {
-      file.getData(new zip.TextWriter(), (content) => {
+      await file.getData(new zip.TextWriter(), (content) => {
         if(this.getFileType(file) == 'scm') {
           schemes.push({
             'name' : this.getFileName(file),
@@ -40,7 +40,7 @@ export class AIAReader {
       });
     }
 
-    console.log(await schemes);
+    console.log(schemes);
 
     for(let scheme of schemes) {
       screens.push(new AIScreen(
