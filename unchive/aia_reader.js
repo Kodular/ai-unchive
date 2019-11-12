@@ -31,13 +31,11 @@ export class AIAReader {
             'name' : this.getFileName(file),
             'scm' : content
           });
-          console.log(this.getFileType(file) + JSON.stringify(schemes));
         } else if(this.getFileType(file) == 'bky') {
           blocks.push({
             'name' : this.getFileName(file),
             'bky' : content
           });
-          console.log('bbb<br>' + JSON.stringify(blocks));
         }
       });
     }
@@ -48,11 +46,7 @@ export class AIAReader {
         blocks.find(x => x.name == scheme.name).bky,
         scheme.name));
     }
-
-
-    for(let s of schemes) {
-      console.log('aa' + s.scm);
-    }
+    console.log('Done');
     return screens;
   }
 
