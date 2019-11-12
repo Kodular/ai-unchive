@@ -48,7 +48,7 @@ export class AIAReader {
 
 
     for(let s of screens) {
-      console.log(s.scheme);
+      console.log('aa' + s.scheme);
     }
     return screens;
   }
