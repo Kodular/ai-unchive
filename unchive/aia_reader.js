@@ -6,6 +6,8 @@ export class AIAReader {
     zip.createReader(readerObj, (reader) => {
       reader.getEntries((entries) => {
         if (entries.length) {
+          console.log(JSON.stringify(entries));
+          console.log(JSON.stringify(entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk')));
           var screens = this.generateScreens(
             entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk')
           );
