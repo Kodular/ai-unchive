@@ -96,7 +96,7 @@ class Component {
     propertyLoader.postMessage({
       'type' : this.package + '.' + this.type,
       'propertyJSON' : properties,
-      'descriptorJSON' : this.customDescriptorJSON || AIProject.descriptorJSON;
+      'descriptorJSON' : this.customDescriptorJSON || AIProject.descriptorJSON
     });
     propertyLoader.addEventListener('message', (event) => {
       this.properties = event.data.properties;
