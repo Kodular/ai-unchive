@@ -13,7 +13,8 @@ export class AIProject {
   }
 
   addScreens(screensArray) {
-    console.log(typeof(screensArray))
+    console.log(typeof(screensArray));
+    console.log(JSON.stringify(screensArray));
     for(let screen of screensArray)
       this.addScreen(screen);
   }

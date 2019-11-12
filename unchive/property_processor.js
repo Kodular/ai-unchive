@@ -3,5 +3,5 @@ this.addEventListener('message', function(e) {
   var propertyJSON = e.data.propertyJson;
   var customJSON = e.data.customJSON;
 
-  return {'properties' : []};
+  this.postMessage({'properties' : []});
 }, false);
