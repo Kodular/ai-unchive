@@ -25,19 +25,18 @@ export class AIAReader {
     var screens = [];
 
     for(let file of files) {
-      await file.getData(new zip.TextWriter(), (content) => {
-        if(this.getFileType(file) == 'scm') {
-          schemes.push({
-            'name' : this.getFileName(file),
-            'scm' : content
-          });
-        } else if(this.getFileType(file) == 'bky') {
-          blocks.push({
-            'name' : this.getFileName(file),
-            'bky' : content
-          });
-        }
-      });
+      await content = getFileContent(file);
+      if(this.getFileType(file) == 'scm') {
+        schemes.push({
+          'name' : this.getFileName(file),
+          'scm' : content
+        });
+      } else if(this.getFileType(file) == 'bky') {
+        blocks.push({
+          'name' : this.getFileName(file),
+          'bky' : content
+        });
+      }
     }
 
     console.log(schemes);
@@ -50,6 +49,14 @@ export class AIAReader {
     }
     console.log('Done');
     return screens;
+  }
+
+  getFileContent(file) {
+    return new Promise((resolve, reject) => {
+      file.getData(new zip.TextWriter(), (content) => {
+        resolve(content);
+      });
+    });
   }
 
   getFileType(file) {
