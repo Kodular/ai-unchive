@@ -1,10 +1,9 @@
 this.addEventListener('message', function(e) {
-  var type = e.data.type;
   var propertyJSON = e.data.propertyJson;
   var descriptorJSON = e.data.descriptorJSON;
 
   var properties = [];
-  for(let property of descriptorJSON.find(x => x.type == type).properties) {
+  for(let property of descriptorJSON) {
     if(propertyJSON.hasOwnProperty(property.name))
       properties.push({
         'name' : property.name,
