@@ -25,7 +25,7 @@ export class AIAReader {
     var screens = [];
 
     for(let file of files) {
-      file.getData(new zip.TextWriter(), function(content) {
+      file.getData(new zip.TextWriter(), (content) => {
         if(this.getFileType(file) == 'scm') {
           schemes.push({
             'name' : this.getFileName(file),
