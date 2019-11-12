@@ -31,13 +31,13 @@ export class AIAReader {
             'name' : this.getFileName(file),
             'scm' : content
           });
-          alert(JSON.stringify(schemes));
+          console.log(this.getFileType(file) + JSON.stringify(schemes));
         } else if(this.getFileType(file) == 'blk') {
           blocks.push({
             'name' : this.getFileName(file),
             'blk' : content
           });
-          alert('bbb<br>' + JSON.stringify(blocks));
+          console.log('bbb<br>' + JSON.stringify(blocks));
         }
       });
     }
