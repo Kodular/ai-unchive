@@ -11,6 +11,10 @@ export class AIAReader {
             entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'bky')
           );
 
+          var extensions = this.generateExtensions(
+            entries.filter(x => this.getFileType(x) == 'json')
+          )
+
           console.log(screens);
           //return new AIProject().addScreens(screens); // TODO:
         }
