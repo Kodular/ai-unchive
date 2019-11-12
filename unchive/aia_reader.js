@@ -28,7 +28,7 @@ export class AIAReader {
       file.getData(new zip.TextWriter(), (content) => {
         if(this.getFileType(file) == 'scm') {
           schemes.push({
-            'name' : this.getFileName(file),
+            'name' : file.filename.split('/').pop().split('.')[0],
             'scm' : content
           });
           console.log(this.getFileType(file) + JSON.stringify(schemes));
