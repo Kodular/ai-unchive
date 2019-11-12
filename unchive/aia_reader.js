@@ -7,9 +7,9 @@ export class AIAReader {
       reader.getEntries((entries) => {
         if (entries.length) {
           console.log(JSON.stringify(entries));
-          console.log(JSON.stringify(entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk')));
+          console.log(JSON.stringify(entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'bky')));
           var screens = this.generateScreens(
-            entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk')
+            entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'bky')
           );
 
           console.log(screens);
@@ -38,7 +38,7 @@ export class AIAReader {
         } else if(this.getFileType(file) == 'blk') {
           blocks.push({
             'name' : this.getFileName(file),
-            'blk' : content
+            'bky' : content
           });
           console.log('bbb<br>' + JSON.stringify(blocks));
         }
@@ -48,7 +48,7 @@ export class AIAReader {
     for(let scheme of schemes) {
       screens.push(new AIScreen(
         scheme.scm,
-        blocks.find(x => x.name == scheme.name).blk,
+        blocks.find(x => x.name == scheme.name).bky,
         scheme.name));
     }
 
