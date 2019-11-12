@@ -6,8 +6,6 @@ export class AIAReader {
     zip.createReader(readerObj, (reader) => {
       reader.getEntries((entries) => {
         if (entries.length) {
-          console.log(JSON.stringify(entries));
-          console.log(JSON.stringify(entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'bky')));
           var screens = this.generateScreens(
             entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'bky')
           );
@@ -27,7 +25,6 @@ export class AIAReader {
     var screens = [];
 
     for(let file of files) {
-      alert(file.filename);
       file.getData(new zip.TextWriter(), (content) => {
         if(this.getFileType(file) == 'scm') {
           schemes.push({
@@ -35,7 +32,7 @@ export class AIAReader {
             'scm' : content
           });
           console.log(this.getFileType(file) + JSON.stringify(schemes));
-        } else if(this.getFileType(file) == 'blk') {
+        } else if(this.getFileType(file) == 'bky') {
           blocks.push({
             'name' : this.getFileName(file),
             'bky' : content
