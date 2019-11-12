@@ -98,10 +98,12 @@ class Component {
 
     console.log('Loading properties of ' + this.name);
     var propertyLoader = new Worker('unchive/property_processor.js');
+    try {
     propertyLoader.postMessage({
       'propertyJSON' : properties,
       'descriptorJSON' : (this.customDescriptorJSON || AIProject.descriptorJSON).find(x => x.type == this.package + '.' + this.type).properties || []
     });
+    }catch(e){;}
     propertyLoader.addEventListener('message', (event) => {
       this.properties = event.data.properties;
       propertyLoader.terminate();
