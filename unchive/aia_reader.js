@@ -7,7 +7,7 @@ export class AIAReader {
       reader.getEntries((entries) => {
         if (entries.length) {
           var screens = this.generateScreens(
-            entries.filter(x => return this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk')
+            entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'blk')
           );
 
           console.log(screens);
@@ -45,7 +45,7 @@ export class AIAReader {
     for(let scheme of schemes) {
       screens.push(new AIScreen(
         scheme.scm,
-        blocks.find(x => return x.name == scheme.name).blk,
+        blocks.find(x => x.name == scheme.name).blk,
         scheme.name));
     }
 
