@@ -94,10 +94,7 @@ class Component {
 
   async loadProperties(properties) {
     if(AIProject.descriptorJSON == undefined) {
-      let response = await fetch('unchive/simple_components.json');
-      //AIProject.descriptorJSON = await DescriptorGenerator.generate();
-      AIProject.descriptorJSON = await response.json();
-      console.log(AIProject.descriptorJSON);
+      AIProject.descriptorJSON = await DescriptorGenerator.generate();
     }
 
     console.log('Loading properties of ' + properties.$Name);
