@@ -54,21 +54,19 @@ export class AIScreen {
 
   generateSchemeData(scmJSON) {
     var componentsJSON = JSON.parse(scmJSON.substring(9, scmJSON.length - 3));
-    this.components = this.generateComponent(componentsJSON.Properties);
+    this.form = this.generateComponent(componentsJSON.Properties);
   }
 
   generateComponent(componentJSON) {
-    var components = [];
     var component = new Component(
       componentJSON.$Name,
       componentJSON.$Type,
       componentJSON.Uuid || 0, //Screens do not have a Uuid property.
       componentJSON);
-    components.push(component);
     for(let childComponent of componentJSON.$Components || []) {
       component.addChild(this.generateComponent(childComponent));
     }
-    return components;
+    return component;
   }
 
   generateBlocks(blkXml) {
