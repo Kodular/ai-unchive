@@ -45,7 +45,8 @@ export class AIAReader {
         return x.name == scheme.name;
       }).blk));
     }
-
+    console.log(JSON.stringify(screens));
+    console.log('JSON.stringify(screens)');
     return screens;
   }
 
