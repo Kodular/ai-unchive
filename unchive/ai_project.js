@@ -97,7 +97,7 @@ class Component {
     }
 
     //console.log('Loading properties of ' + this.name);
-    console.log(AIProject.descriptorJSON.filter(x => x.type == this.package + '.' + this.type));
+    console.log(this.type + '===' + AIProject.descriptorJSON.filter(x => x.type == this.package + '.' + this.type));
     var propertyLoader = new Worker('unchive/property_processor.js');
     propertyLoader.postMessage({
       'propertyJSON' : properties,
