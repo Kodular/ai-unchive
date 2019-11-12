@@ -19,7 +19,7 @@ export class AIProject {
 
   removeScreen(screen) {
     if(screen instanceof AIScreen)
-      // TODO: Add splice code
+      ;// TODO: Add splice code
     else
       throw new Exception('Attempt to remove non-screen object from AIProject');
   }
