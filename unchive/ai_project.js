@@ -53,7 +53,7 @@ export class AIScreen {
   }
 
   generateSchemeData(scmJson) {
-    this.components = JSON.parse(scmJson.substring(9, scmJson.length - 9));
+    this.components = scmJson.substring(9, scmJson.length - 9);//JSON.parse();
   }
 
   generateBlocks(blkXml) {
