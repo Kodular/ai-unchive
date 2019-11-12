@@ -46,7 +46,10 @@ export class AIAReader {
       }).blk));
     }
     console.log(JSON.stringify(screens));
-    console.log('JSON.stringify(screens)');
+    console.log('schemes:');
+    console.log(JSON.stringify(schemes));
+    console.log('bloks:');
+    console.log(JSON.stringify(schemes));
     return screens;
   }
 
