@@ -83,3 +83,16 @@ class TitleBar extends View {
     this.addView(this.uploadButton);
   }
 }
+
+function loadDescriptorJSON(callback) {
+    var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+    xobj.open('GET', 'simple_components.json', true);
+    xobj.onreadystatechange = function () {
+      if (xobj.readyState == 4 && xobj.status == "200") {
+        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+        callback(xobj.responseText);
+      }
+    };
+    xobj.send(null);
+ }(data => {AIProject.descriptorJSON = data})
