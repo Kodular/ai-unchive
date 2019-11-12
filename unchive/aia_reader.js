@@ -29,12 +29,12 @@ export class AIAReader {
         if(this.getFileType(file) == 'scm') {
           schemes.push({
             'name' : this.getFileName(file),
-            'scm' : text
+            'scm' : content
           });
         } else if(this.getFileType(file) == 'blk') {
           blocks.push({
             'name' : this.getFileName(file),
-            'blk' : text
+            'blk' : content
           });
         }
       });
