@@ -12,8 +12,8 @@ export class AIProject {
       throw new Exception('Attempt to add non-screen object to AIProject');
   }
 
-  addScreens(screens) {
-    for (let screen of screens)
+  addScreens(screensArray) {
+    for(let screen of screensArray)
       this.addScreen(screen);
   }
 
@@ -91,7 +91,7 @@ class Component {
   }
 
   loadProperties(properties) {
-    var propertyLoader = Worker('property_processor.js');
+    var propertyLoader = new Worker('property_processor.js');
     propertyLoader.postMessage({
       'type' : this.package + '.' + this.type,
       'propertyJSON' : properties,
