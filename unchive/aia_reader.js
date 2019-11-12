@@ -57,7 +57,7 @@ export class AIAReader {
       console.log(file.fileName.split('/'))
       var content = await this.getFileContent(file);
       extensions.push({
-        'name' : file.fileName.split('/')[0]
+        'name' : file.fileName.split('/')[0],
         'descriptorJson' : content
       });
     }
