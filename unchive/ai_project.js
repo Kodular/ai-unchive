@@ -132,13 +132,13 @@ class Component {
 }
 
 export class Extension {
-  constructor(name, descriptorJSON, package) {
+  constructor(name, descriptorJSON, packageName) {
     this.name = name;
     this.descriptorJSON = descriptorJSON;
-    this.package = package;
+    this.packageName = packageName;
   }
 
   getFullPackageName() {
-    return this.package + '.' + this.name;
+    return this.packageName + '.' + this.name;
   }
 }
