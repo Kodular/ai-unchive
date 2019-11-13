@@ -51,7 +51,7 @@ export class AIProject {
 
 export class AIScreen {
   constructor(scm, blk, name, project) {
-    addToProject(project);
+    this.addToProject(project);
     this.generateSchemeData(scm);
     this.generateBlocks(blk);
     this.name = name;
