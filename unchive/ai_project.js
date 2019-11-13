@@ -16,8 +16,8 @@ export class AIProject {
     }
   }
 
-  addScreens(screensArray) {
-    console.log('scrs' + screensArray);
+  async addScreens(screensArray) {
+    console.log('scrs' + await screensArray);
     for(let screen of screensArray)
       this.addScreen(screen);
   }
