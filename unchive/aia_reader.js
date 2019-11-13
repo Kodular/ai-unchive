@@ -18,10 +18,7 @@ export class AIAReader {
 
           project.addExtensions(
             this.generateExtensions(
-              entries.filter(x =>
-                this.getFileType(x) == 'json' &&
-                this.getFileName(x) == 'components'
-            )
+              entries.filter(x => this.getFileType(x) == 'json')
             ));
         }
       });
@@ -62,15 +59,32 @@ export class AIAReader {
   }
 
   static async generateExtensions(files) {
+    var buildInfos = [];
+    var descriptors = [];
     var extensions = [];
 
     for(let file of files) {
       var content = await this.getFileContent(file);
-      extensions.push(new Extension(
-        file.filename.split('/')[2].split('.').pop(),
-        JSON.parse(content)[0],
-        ''
-      ));
+      if(this.getFileName(file) == 'component_build_infos') {
+        buildInfos.push({
+          'name' : file.filename.split('/')[2],
+          'info' : JSON.parse(content)
+        });
+      } else if(this.getFileName(file) == 'components') {
+        descriptors.push({
+          'name' : file.filename.split('/')[2],
+          'descriptor' : JSON.parse(content)
+        });
+      }
+    }
+
+    for(let buildInfo of buildInfos) {
+      for(let ext of buildInfo.info) {
+        extensions.push(new Extension(
+          ext.type,
+          descriptors.find(x => x.name == buildInfo.name).descriptor[buildInfo.info.indexOf(ext)]
+        ));
+      }
     }
 
     return extensions;
