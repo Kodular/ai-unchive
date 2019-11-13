@@ -3,11 +3,11 @@ import { AIProject, AIScreen, Extension } from './ai_project.js'
 export class AIAReader {
   static async read(content) {
     AIProject.descriptorJSON = await DescriptorGenerator.generate();
+    var project = new AIProject();
     var readerObj = content instanceof Blob ? new zip.BlobReader(content) : new zip.HttpReader(content);
     zip.createReader(readerObj, (reader) => {
       reader.getEntries((entries) => {
         if (entries.length) {
-          var project = new AIProject();
           project.addScreens(
             this.generateScreens(
               entries.filter(x =>
@@ -19,14 +19,13 @@ export class AIAReader {
           project.addExtensions(
             this.generateExtensions(
               entries.filter(x => this.getFileType(x) == 'json')
-            )
-          );
-          return project;
+            ));
         }
       });
     }, function(error) {
       // onerror callback
     });
+    return project;
   }
 
   static async generateScreens(files) {
