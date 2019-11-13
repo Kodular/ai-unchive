@@ -1,5 +1,4 @@
 this.addEventListener('message', function(e) {
-  try{
   var propertyJSON = e.data.propertyJson;
   var descriptorJSON = e.data.descriptorJSON;
 
@@ -19,6 +18,4 @@ this.addEventListener('message', function(e) {
       });
   }
   this.postMessage({'properties' : properties});
-  }catch(e){;}
-  this.postMessage({'properties' : []});
 }, false);
