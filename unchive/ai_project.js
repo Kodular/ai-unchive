@@ -78,6 +78,11 @@ export class AIScreen {
       componentJSON.$Type,
       componentJSON.Uuid || 0, //Screens do not have a Uuid property.
       componentJSON);
+
+    var extType = this.project.extensions.find(x => x.name.split('.').pop() == componentJSON.$Type);
+    if(extType != undefined)
+      component.customDescriptorJSON = extType.descriptorJSON;
+      
     for(let childComponent of componentJSON.$Components || []) {
       component.addChild(this.generateComponent(childComponent));
     }
@@ -112,7 +117,7 @@ class Component {
     try {
     propertyLoader.postMessage({
       'propertyJSON' : properties,
-      'descriptorJSON' : (this.customDescriptorJSON || AIProject.descriptorJSON).find(x => x.type == this.package + '.' + this.type).properties || []
+      'descriptorJSON' : (this.customDescriptorJSON || AIProject.descriptorJSON.find(x => x.type == this.package + '.' + this.type)).properties || []
     });
     }catch(e){;}
     propertyLoader.addEventListener('message', (event) => {
