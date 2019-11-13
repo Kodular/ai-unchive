@@ -8,12 +8,10 @@ export class AIProject {
   }
 
   addScreen(screen) {
-    if(screen instanceof AIScreen) {
+    if(screen instanceof AIScreen)
         this.screens.push(screen);
-        screen.addToProject(this);
-    } else {
+    else
         throw new TypeError('Attempt to add ' + typeof screen + ' to AIProject');
-    }
   }
 
   async addScreens(screensArray) {
@@ -52,7 +50,8 @@ export class AIProject {
 }
 
 export class AIScreen {
-  constructor(scm, blk, name) {
+  constructor(scm, blk, name, project) {
+    addToProject(project);
     this.generateSchemeData(scm);
     this.generateBlocks(blk);
     this.name = name;
@@ -82,7 +81,7 @@ export class AIScreen {
     var extType = this.project.extensions.find(x => x.name.split('.').pop() == componentJSON.$Type);
     if(extType != undefined)
       component.customDescriptorJSON = extType.descriptorJSON;
-      
+
     for(let childComponent of componentJSON.$Components || []) {
       component.addChild(this.generateComponent(childComponent));
     }

@@ -12,7 +12,8 @@ export class AIAReader {
             this.generateScreens(
               entries.filter(x =>
                 this.getFileType(x) == 'scm' ||
-                this.getFileType(x) == 'bky')
+                this.getFileType(x) == 'bky'),
+              project
             )
           );
 
@@ -28,7 +29,7 @@ export class AIAReader {
     return project;
   }
 
-  static async generateScreens(files) {
+  static async generateScreens(files, project) {
     var schemes = [];
     var blocks = [];
 
@@ -53,7 +54,9 @@ export class AIAReader {
       screens.push(new AIScreen(
         scheme.scm,
         blocks.find(x => x.name == scheme.name).bky,
-        scheme.name));
+        scheme.name,
+        project
+      ));
     }
     return screens;
   }
