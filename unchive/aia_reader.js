@@ -22,7 +22,7 @@ export class AIAReader {
             )
           );
 
-          console.log('prj' + project);
+          console.log('prj' + JSON.stringify(project));
           //return new AIProject().addScreens(screens); // TODO:
         }
       });
@@ -62,7 +62,7 @@ export class AIAReader {
   }
 
   static async generateExtensions(files) {
-    console.log('exts: ' + files);
+    console.log('exts: ' + JSON.stringify(files));
     var extensions = [];
 
     for(let file of files) {
