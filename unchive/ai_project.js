@@ -84,7 +84,7 @@ export class AIScreen {
       component.customDescriptorJSON = extType.descriptorJSON;
 
     for(let childComponent of componentJSON.$Components || []) {
-      component.addChild(this.generateComponent(childComponent));
+      component.addChild(await this.generateComponent(childComponent));
     }
     return component;
   }
