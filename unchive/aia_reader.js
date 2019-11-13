@@ -8,7 +8,7 @@ export class AIAReader {
       reader.getEntries((entries) => {
         if (entries.length) {
           var project = new AIProject();
-          await project.addScreens(
+          project.addScreens(
             this.generateScreens(
               entries.filter(x =>
                 this.getFileType(x) == 'scm' ||
@@ -16,14 +16,12 @@ export class AIAReader {
             )
           );
 
-          await project.addExtensions(
+          project.addExtensions(
             this.generateExtensions(
               entries.filter(x => this.getFileType(x) == 'json')
             )
           );
-
-          console.log('prj' + JSON.stringify(project));
-          //return new AIProject().addScreens(screens); // TODO:
+          return project;
         }
       });
     }, function(error) {
@@ -68,7 +66,7 @@ export class AIAReader {
       var content = await this.getFileContent(file);
       extensions.push(new Extension(
         file.filename.split('/')[2].split('.').pop(),
-        content,
+        JSON.parse(content)[0],
         ''
       ));
     }

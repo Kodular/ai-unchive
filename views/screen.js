@@ -54,7 +54,8 @@ export class Screen extends View {
     this.req = getReqParams();
 
     if(this.req.url != undefined) {
-      var aiProject = AIAReader.read(this.req.url);
+      var aiProject = await AIAReader.read(this.req.url);
+      console.log(aiProject);
     }
 
     if(this.req.embedded == 'true') {
