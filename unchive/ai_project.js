@@ -79,8 +79,10 @@ export class AIScreen {
       componentJSON);
 
     var extType = (await this.project.extensions).find(x => x.name.split('.').pop() == componentJSON.$Type);
-    if(extType != undefined)
-      component.customDescriptorJSON = extType.descriptorJSON;
+    if(extType != undefined) {
+        component.customDescriptorJSON = extType.descriptorJSON;
+        console.log('got: ' + componentJSON.$Type);
+    }
 
     for(let childComponent of componentJSON.$Components || []) {
       component.addChild(await this.generateComponent(childComponent));
@@ -113,7 +115,7 @@ class Component {
 
     //console.log('Loading properties of ' + this.name);
     try {
-      (this.customDescriptorJSON || AIProject.descriptorJSON.find(x => x.type == this.package + '.' + this.type)).properties || []
+      var testvar = (this.customDescriptorJSON || AIProject.descriptorJSON.find(x => x.type == this.package + '.' + this.type)).properties || []
     } catch(e) {
       console.log(this.name)
     }
