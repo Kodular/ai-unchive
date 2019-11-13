@@ -18,7 +18,10 @@ export class AIAReader {
 
           project.addExtensions(
             this.generateExtensions(
-              entries.filter(x => this.getFileType(x) == 'json')
+              entries.filter(x =>
+                this.getFileType(x) == 'json' &&
+                this.getFileName(x) == 'components'
+            )
             ));
         }
       });
