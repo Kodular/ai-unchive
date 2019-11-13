@@ -8,7 +8,7 @@ export class AIAReader {
       reader.getEntries((entries) => {
         if (entries.length) {
           var project = new AIProject();
-          project.addScreens(
+          await project.addScreens(
             this.generateScreens(
               entries.filter(x =>
                 this.getFileType(x) == 'scm' ||
@@ -16,13 +16,13 @@ export class AIAReader {
             )
           );
 
-          project.addExtensions(
+          await project.addExtensions(
             this.generateExtensions(
               entries.filter(x => this.getFileType(x) == 'json')
             )
           );
 
-          console.log('prj' + JSON.stringify(await project));
+          console.log('prj' + JSON.stringify(project));
           //return new AIProject().addScreens(screens); // TODO:
         }
       });
