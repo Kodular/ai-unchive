@@ -23,6 +23,10 @@ export class AIProject {
       this.addScreen(screen);
   }
 
+  addExtensions(extensions) {
+    this.extensions = extensions;
+  }
+
   removeScreen(screen) {
     if(screen instanceof AIScreen)
       ;// TODO: Add splice code

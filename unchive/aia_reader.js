@@ -19,7 +19,7 @@ export class AIAReader {
           project.addExtensions(
             this.generateExtensions(
               entries.filter(x => this.getFileType(x) == 'json')
-            );
+            )
           );
 
           console.log(project);
