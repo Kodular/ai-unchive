@@ -72,17 +72,16 @@ export class AIScreen {
   }
 
   async generateComponent(componentJSON) {
+    var extType = (await this.project.extensions).find(x => x.name.split('.').pop() == componentJSON.$Type);
+    if(extType != undefined)
+        var customDescriptorJSON = extType.descriptorJSON;
+
     var component = new Component(
       componentJSON.$Name,
       componentJSON.$Type,
       componentJSON.Uuid || 0, //Screens do not have a Uuid property.
-      componentJSON);
-
-    var extType = (await this.project.extensions).find(x => x.name.split('.').pop() == componentJSON.$Type);
-    if(extType != undefined) {
-        component.customDescriptorJSON = extType.descriptorJSON;
-        console.log('got: ' + componentJSON.$Type);
-    }
+      componentJSON,
+      customDescriptorJSON || null);
 
     for(let childComponent of componentJSON.$Components || []) {
       component.addChild(await this.generateComponent(childComponent));
@@ -97,13 +96,13 @@ export class AIScreen {
 }
 
 class Component {
-  constructor(name, type, uid, propertiesJSON) {
+  constructor(name, type, uid, propertiesJSON, customDescriptorJSON) {
     this.name = name;
     this.type = type;
     this.uid = uid;
     this.children = [];
     this.package = 'com.google.appinventor.components.runtime';
-    this.customDescriptorJSON = null;
+    this.customDescriptorJSON = customDescriptorJSON;
 
     this.loadProperties(propertiesJSON);
   }
@@ -122,7 +121,7 @@ class Component {
     var propertyLoader = new Worker('unchive/property_processor.js');
     propertyLoader.postMessage({
       'propertyJSON' : properties,
-      'descriptorJSON' : []//(this.customDescriptorJSON || AIProject.descriptorJSON.find(x => x.type == this.package + '.' + this.type)).properties || []
+      'descriptorJSON' : (this.customDescriptorJSON || AIProject.descriptorJSON.find(x => x.type == this.package + '.' + this.type)).properties || []
     });
     propertyLoader.addEventListener('message', (event) => {
       this.properties = event.data.properties;
