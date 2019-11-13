@@ -78,6 +78,7 @@ export class AIScreen {
       componentJSON.Uuid || 0, //Screens do not have a Uuid property.
       componentJSON);
 
+    console.log(this.project.extensions);
     var extType = this.project.extensions.find(x => x.name.split('.').pop() == componentJSON.$Type);
     if(extType != undefined)
       component.customDescriptorJSON = extType.descriptorJSON;

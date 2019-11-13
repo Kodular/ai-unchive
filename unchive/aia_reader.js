@@ -8,6 +8,12 @@ export class AIAReader {
     zip.createReader(readerObj, (reader) => {
       reader.getEntries((entries) => {
         if (entries.length) {
+          project.addExtensions(
+            this.generateExtensions(
+              entries.filter(x => this.getFileType(x) == 'json')
+            )
+          );
+          
           project.addScreens(
             this.generateScreens(
               entries.filter(x =>
@@ -16,11 +22,6 @@ export class AIAReader {
               project
             )
           );
-
-          project.addExtensions(
-            this.generateExtensions(
-              entries.filter(x => this.getFileType(x) == 'json')
-            ));
         }
       });
     }, function(error) {
