@@ -9,7 +9,7 @@ export class AIAReader {
         if (entries.length) {
           var project = new AIProject();
           project.addScreens(
-            this.generateScreens(
+            await this.generateScreens(
               entries.filter(x =>
                 this.getFileType(x) == 'scm' ||
                 this.getFileType(x) == 'bky')
@@ -17,7 +17,7 @@ export class AIAReader {
           );
 
           project.addExtensions(
-            this.generateExtensions(
+            await this.generateExtensions(
               entries.filter(x => this.getFileType(x) == 'json')
             )
           );
