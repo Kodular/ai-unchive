@@ -12,7 +12,7 @@ export class AIAReader {
           );
 
           var extensions = this.generateExtensions(
-            entries//.filter(x => this.getFileType(x) == 'json')
+            entries.filter(x => this.getFileType(x) == 'json')
           );
           console.log(screens);
           //return new AIProject().addScreens(screens); // TODO:
@@ -58,7 +58,7 @@ export class AIAReader {
     var extensions = [];
 
     for(let file of files) {
-      console.log(file.fileName.split('/'))
+      console.log(file.filename.split('/'))
       var content = await this.getFileContent(file);
       extensions.push({
         'name' : file.fileName.split('/')[0],
@@ -76,7 +76,7 @@ export class AIAReader {
   }
 
   static getFileType(file) {
-    return file.filename.split('.')[1];
+    return file.filename.split('.').pop();
   }
 
   static getFileName(file) {
