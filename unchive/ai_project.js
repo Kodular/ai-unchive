@@ -8,10 +8,12 @@ export class AIProject {
   }
 
   addScreen(screen) {
-    if(screen instanceof AIScreen)
-      this.screens.push(screen);
-    else
-      throw new TypeError('Attempt to add ' + typeof screen + ' object to AIProject');
+    if(screen instanceof AIScreen) {
+        this.screens.push(screen);
+        screen.addToProject(this);
+    } else {
+        throw new TypeError('Attempt to add ' + typeof screen + ' to AIProject');
+    }
   }
 
   addScreens(screensArray) {
@@ -25,21 +27,21 @@ export class AIProject {
     if(screen instanceof AIScreen)
       ;// TODO: Add splice code
     else
-      throw new TypeError('Attempt to remove ' + typeof screen + ' object from AIProject');
+      throw new TypeError('Attempt to remove ' + typeof screen + ' from AIProject');
   }
 
   addAsset(asset) {
     if(screen instanceof AIAsset)
       this.assets.push(asset);
     else
-      throw new TypeError('Attempt to add ' + typeof asset + ' object to AIProject');
+      throw new TypeError('Attempt to add ' + typeof asset + ' to AIProject');
   }
 
   addExtension(extension) {
     if(extension instanceof AIExtension)
       this.extensions.push(extension);
     else
-      throw new TypeError('Attempt to add ' + typeof extension + ' object to AIProject');
+      throw new TypeError('Attempt to add ' + typeof extension + ' to AIProject');
   }
 
   generateSummary() {
@@ -54,6 +56,13 @@ export class AIScreen {
     this.name = name;
     if(name == null)
       throw new TypeError('Screen name cannot be null!');
+  }
+
+  addToProject(project) {
+    if(project instanceof AIProject)
+      this.project = project;
+    else
+      throw new TypeError('Attempt to set ' + typeof project + ' as project of AIScreen');
   }
 
   generateSchemeData(scmJSON) {
@@ -115,5 +124,17 @@ class Component {
       this.children.push(component);
     else
       throw new TypeError('Attempt to add ' + typeof component + ' to Component.');
+  }
+}
+
+export class Extension {
+  constructor(name, descriptorJSON, package) {
+    this.name = name;
+    this.descriptorJSON = descriptorJSON;
+    this.package = package;
+  }
+
+  getFullPackageName() {
+    return this.package + '.' + this.name;
   }
 }

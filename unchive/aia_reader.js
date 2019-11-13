@@ -1,4 +1,4 @@
-import { AIProject, AIScreen } from './ai_project.js'
+import { AIProject, AIScreen, Extension } from './ai_project.js'
 
 export class AIAReader {
   static async read(content) {
@@ -7,14 +7,22 @@ export class AIAReader {
     zip.createReader(readerObj, (reader) => {
       reader.getEntries((entries) => {
         if (entries.length) {
-          var screens = this.generateScreens(
-            entries.filter(x => this.getFileType(x) == 'scm' || this.getFileType(x) == 'bky')
+          var project = new AIProject();
+          project.addScreens(
+            this.generateScreens(
+              entries.filter(x =>
+                this.getFileType(x) == 'scm' ||
+                this.getFileType(x) == 'bky')
+            )
           );
 
-          var extensions = this.generateExtensions(
-            entries.filter(x => this.getFileType(x) == 'json')
+          project.addExtensions(
+            this.generateExtensions(
+              entries.filter(x => this.getFileType(x) == 'json')
+            );
           );
-          console.log(screens);
+
+          console.log(project);
           //return new AIProject().addScreens(screens); // TODO:
         }
       });
@@ -58,13 +66,15 @@ export class AIAReader {
     var extensions = [];
 
     for(let file of files) {
-      console.log(file.filename.split('/'))
       var content = await this.getFileContent(file);
-      extensions.push({
-        'name' : file.fileName.split('/')[0],
-        'descriptorJson' : content
-      });
+      extensions.push(new Extension(
+        file.filename.split('/')[2].split('.').pop(),
+        content,
+        ''
+      ));
     }
+
+    return extensions;
   }
 
   static getFileContent(file) {
