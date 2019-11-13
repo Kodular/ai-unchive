@@ -22,7 +22,7 @@ export class AIAReader {
             )
           );
 
-          console.log('prj' + JSON.stringify(project));
+          console.log('prj' + JSON.stringify(await project));
           //return new AIProject().addScreens(screens); // TODO:
         }
       });
