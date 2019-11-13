@@ -17,7 +17,6 @@ export class AIProject {
   }
 
   async addScreens(screensArray) {
-    console.log('scrs' + JSON.stringify(await screensArray));
     for(let screen of await screensArray)
       this.addScreen(screen);
   }

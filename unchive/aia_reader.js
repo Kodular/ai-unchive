@@ -62,7 +62,6 @@ export class AIAReader {
   }
 
   static async generateExtensions(files) {
-    console.log('exts: ' + JSON.stringify(files));
     var extensions = [];
 
     for(let file of files) {
