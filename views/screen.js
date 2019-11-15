@@ -127,7 +127,12 @@ class TitleBar extends View {
 		uploadInput.domElement.type = 'file';
 
 		uploadInput.domElement.addEventListener('change', async (event) => {
-			RootPanel.openProject(await AIAReader.read(event.target.files[0]));
+			if(uploadInput.domElement.value.split('.').pop() == 'aiv') {
+				let response = await fetch(this.req.url);
+				this.openProject(Flatted.parse(JSON.stringify(await response.json())));
+			}	else if(uploadInput.domElement.value.split('.').pop() == 'aia') {
+				RootPanel.openProject(await AIAReader.read(event.target.files[0]));
+			}
 		});
 
 		this.uploadButton.addClickListener((event) => {
