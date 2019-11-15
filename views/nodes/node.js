@@ -294,11 +294,11 @@ export class AssetNode extends Node {
 
 	generatePreview(url, type) {
 		var preview;
-		if(AssetNode.supportedImageTypes.indexOf(type) != -1)
+		if(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp'].indexOf(type) != -1)
 			preview = new View('IMG');
-		else if(AssetNode.supportedVideoTypes.indexOf(type) != -1)
+		else if(['mp4', 'avi', '3gp', 'flv', 'wmv'].indexOf(type) != -1)
 			preview = new View('VIDEO');
-		else if(AssetNode.supportedAudioTypes.indexOf(type) != -1)
+		else if(['mp3', 'ogg', 'wav', 'wma'].indexOf(type) != -1)
 			preview = new View('AUDIO');
 		else
 			preview = new Label('Asset cannot be previewed. Click to download');
@@ -317,10 +317,10 @@ export class AssetNode extends Node {
 		this.addView(preview);
 	}
 
-	static supportedImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp'];
-	static supportedVideoTypes = ['mp4', 'avi', '3gp', 'flv', 'wmv'];
-	static supportedAudioTypes = ['mp3', 'ogg', 'wav', 'wma'];
-	static units = ['B', 'kB', 'mB', 'gB', 'tB', 'pB'];
+	//static supportedImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp'];
+	//static supportedVideoTypes = ['mp4', 'avi', '3gp', 'flv', 'wmv'];
+	//static supportedAudioTypes = ['mp3', 'ogg', 'wav', 'wma'];
+	//static units = ['B', 'kB', 'mB', 'gB', 'tB', 'pB'];
 
 	static formatAssetSize(size) {
 		var unitCount = 0
@@ -328,6 +328,6 @@ export class AssetNode extends Node {
 			size /= 1000;
 			unitCount++;
 		}
-		return parseInt(size) + AssetNode.units[unitCount];
+		return parseInt(size) + ['B', 'kB', 'mB', 'gB', 'tB', 'pB'][unitCount];
 	}
 }
