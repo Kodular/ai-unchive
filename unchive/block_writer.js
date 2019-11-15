@@ -1,13 +1,16 @@
 export class BlockWriter {
-	static COMPONENT_EVENT = 'component_event';
-	static COMPONENT_METHOD = 'component_method';
-	static COMPONENT_SET_GET = 'component_set_get';
-	static GLOBAL_DECLARATION = 'global_declaration';
-	static LOGIC_FALSE = 'logic_false';
-	static LOGIC_TRUE = 'logic_true';
-	static COMPONENT_COMPONENT_BLOCK = 'component_component_block';
+	static initConstants() {
+		this.COMPONENT_EVENT = 'component_event';
+		this.COMPONENT_METHOD = 'component_method';
+		this.COMPONENT_SET_GET = 'component_set_get';
+		this.GLOBAL_DECLARATION = 'global_declaration';
+		this.LOGIC_FALSE = 'logic_false';
+		this.LOGIC_TRUE = 'logic_true';
+		this.COMPONENT_COMPONENT_BLOCK = 'component_component_block';
+	}
 
 	static writeBlock(blockXML) {
+		BlockWriter.initConstants();
 		switch(blockXML.getAttribute('type')) {
 			case this.COMPONENT_EVENT:
 			return this.writeComponentEvent(blockXML);
