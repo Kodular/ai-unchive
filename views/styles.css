@@ -96,6 +96,11 @@ body {
   margin: 10px auto 0 auto;
   cursor: pointer;
 	color: var(--primary);
+	transition: filter 0.2s;
+}
+
+.asset-preview:not(p):hover {
+	filter: brightness(0.9);
 }
 
 .unchive-label {
