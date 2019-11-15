@@ -287,7 +287,7 @@ export class ExtensionNode extends Node {
 export class AssetNode extends Node {
 	constructor(assetName, assetType, assetSize, assetURL) {
 		super(assetName + '.' + assetType, AssetNode.formatAssetSize(assetSize));
-		this.assetName = assetName;
+		this.assetName = assetName + '.' + assetType;
 		this.generatePreview(assetURL, assetType);
 		this.addStyleName('unchive-extension-node');
 	}
@@ -305,22 +305,21 @@ export class AssetNode extends Node {
 
 		preview.setAttribute('src', url);
 		preview.addStyleName('asset-preview');
-		/*preview.domElement.addEventListener('click', (e) => {
+		preview.domElement.addEventListener('click', (e) => {
 			var anchor = new View('A');
 			anchor.domElement.href = url;
 			anchor.domElement.target = '_blank';
-			anchor.download = 'a.png'//this.assetName;
+			anchor.domElement.download = this.assetName;
 
-			RootPanel.addView(anchor);
 			anchor.domElement.click();
-		});*/
+		});
 
 		this.addView(preview);
 	}
 
 	static supportedImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp'];
-	static supportedVideoTypes = [];
-	static supportedAudioTypes = [];
+	static supportedVideoTypes = ['mp4', 'avi', '3gp', 'flv', 'wmv'];
+	static supportedAudioTypes = ['mp3', 'ogg', 'wav', 'wma'];
 	static units = ['B', 'kB', 'mB', 'gB', 'tB', 'pB'];
 
 	static formatAssetSize(size) {
