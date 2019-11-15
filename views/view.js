@@ -1,6 +1,8 @@
 export class View {
   constructor(domElementName) {
     this.domElement = document.createElement(domElementName);
+    this.visible = true;
+    this.cacheDisplayStyle = this.domElement.style.display;
   }
 
   addStyleName(styleName) {
@@ -15,13 +17,21 @@ export class View {
     this.domElement.classList.remove(styleName);
   }
 
-  addView(view) {
+  async addView(view) {
     this.domElement.appendChild(view.domElement);
   }
 
-  removeView(view) {
+  async removeView(view) {
     this.domElement.removeChild(view.domElement);
   }
+
+  hasView(view) {
+    return this.domElement.contains(view.domElement);
+  }
+
+	async insertView(view, position) {
+		this.domElement.insertBefore(view.domElement, this.domElement.childNodes[position - 1]);
+	}
 
   setAttribute(attributeName, attributeValue) {
     this.domElement.setAttribute(attributeName, attributeValue);
@@ -32,10 +42,16 @@ export class View {
   }
 
   setVisible(visible) {
-    if(visible)
-      this.domElement.style.display = (this.cacheDisplayStyle == 'none') ? 'none' : this.cacheDisplayStyle;
-    else
+    if(visible) {
+      this.domElement.style.display = this.cacheDisplayStyle;
+    } else {
       this.cacheDisplayStyle = this.domElement.style.display;
       this.domElement.style.display = 'none';
+    }
+    this.visible = visible;
+  }
+
+  clear() {
+    this.domElement.innerHTML = '';
   }
 }

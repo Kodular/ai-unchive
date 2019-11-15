@@ -1,33 +1,41 @@
-import { AIProject, AIScreen, Extension } from './ai_project.js'
+import { AIProject, AIScreen, AIExtension, AIAsset } from './ai_project.js'
 
 export class AIAReader {
   static async read(content) {
-    AIProject.descriptorJSON = await DescriptorGenerator.generate();
-    var project = new AIProject();
-    var readerObj = content instanceof Blob ? new zip.BlobReader(content) : new zip.HttpReader(content);
-    zip.createReader(readerObj, (reader) => {
-      reader.getEntries((entries) => {
-        if (entries.length) {
-          project.addExtensions(
-            this.generateExtensions(
-              entries.filter(x => this.getFileType(x) == 'json')
-            )
-          );
-          
-          project.addScreens(
-            this.generateScreens(
-              entries.filter(x =>
-                this.getFileType(x) == 'scm' ||
-                this.getFileType(x) == 'bky'),
-              project
-            )
-          );
-        }
+    return new Promise(async (resolve, reject) => {
+      AIProject.descriptorJSON = await DescriptorGenerator.generate();
+      var project = new AIProject();
+      var readerObj = content instanceof Blob ? new zip.BlobReader(content) : new zip.HttpReader(content);
+      zip.createReader(readerObj, (reader) => {
+        reader.getEntries(async (entries) => {
+          if (entries.length) {
+            project.addExtensions(
+              await this.generateExtensions(
+                entries.filter(x => this.getFileType(x) == 'json')
+              )
+            );
+
+            project.addScreens(
+              await this.generateScreens(
+                entries.filter(x =>
+                  this.getFileType(x) == 'scm' ||
+                  this.getFileType(x) == 'bky'),
+                project
+              )
+            );
+
+            project.addAssets(
+              await this.generateAssets(
+                entries.filter(x =>
+                  x.filename.split('/')[0] == 'assets' &&
+                  x.filename.split('/')[2] == undefined)
+              )
+            );
+            resolve(project);
+          }
+        });
       });
-    }, function(error) {
-      // onerror callback
-    });
-    return project;
+    })
   }
 
   static async generateScreens(files, project) {
@@ -52,14 +60,15 @@ export class AIAReader {
     }
 
     for(let scheme of schemes) {
-      screens.push(new AIScreen(
+			let aiScreen = new AIScreen();
+      screens.push(aiScreen.init(
         scheme.scm,
         blocks.find(x => x.name == scheme.name).bky,
         scheme.name,
         project
       ));
     }
-    return screens;
+    return Promise.all(screens);
   }
 
   static async generateExtensions(files) {
@@ -69,12 +78,12 @@ export class AIAReader {
 
     for(let file of files) {
       var content = await this.getFileContent(file);
-      if(this.getFileName(file) == 'component_build_infos') {
+      if(this.getFileName(file) == 'component_build_infos' || this.getFileName(file) == 'component_build_info') {
         buildInfos.push({
           'name' : file.filename.split('/')[2],
           'info' : JSON.parse(content)
         });
-      } else if(this.getFileName(file) == 'components') {
+      } else if(this.getFileName(file) == 'components' || this.getFileName(file) == 'component') {
         descriptors.push({
           'name' : file.filename.split('/')[2],
           'descriptor' : JSON.parse(content)
@@ -83,10 +92,17 @@ export class AIAReader {
     }
 
     for(let buildInfo of buildInfos) {
-      for(let ext of buildInfo.info) {
-        extensions.push(new Extension(
-          ext.type,
-          descriptors.find(x => x.name == buildInfo.name).descriptor[buildInfo.info.indexOf(ext)]
+      if(Array.isArray(buildInfo.info)) {
+        for(let ext of buildInfo.info) {
+          extensions.push(new AIExtension(
+            ext.type,
+            descriptors.find(x => x.name == buildInfo.name).descriptor[buildInfo.info.indexOf(ext)]
+          ));
+        }
+      } else {
+        extensions.push(new AIExtension(
+          buildInfo.info.type,
+          descriptors.find(x => x.name == buildInfo.name).descriptor
         ));
       }
     }
@@ -94,9 +110,22 @@ export class AIAReader {
     return extensions;
   }
 
-  static getFileContent(file) {
+  static async generateAssets(files) {
+    var assets = [];
+    for(let file of files) {
+      var content = await this.getFileContent(file, new zip.BlobWriter());
+      assets.push(new AIAsset(
+        this.getFileName(file),
+        this.getFileType(file),
+        content
+      ));
+    }
+    return assets;
+  }
+
+  static getFileContent(file, writer = new zip.TextWriter()) {
     return new Promise((resolve, reject) => {
-      file.getData(new zip.TextWriter(), (content) => {
+      file.getData(writer, (content) => {
         resolve(content);
       });
     });

@@ -1,11 +1,9 @@
 this.addEventListener('message', function(e) {
-  var propertyJSON = e.data.propertyJson;
+  var propertyJSON = e.data.propertyJSON;
   var descriptorJSON = e.data.descriptorJSON;
 
   var properties = [];
-  console.log(descriptorJSON);
   for(let property of descriptorJSON) {
-    console.log(property.name);
     if(propertyJSON.hasOwnProperty(property.name))
       properties.push({
         'name' : property.name,
@@ -14,7 +12,8 @@ this.addEventListener('message', function(e) {
     else
       properties.push({
         'name' : property.name,
-        'value' : property.defaultValue
+        'value' : property.defaultValue,
+				'editorType' : property.editorType
       });
   }
   this.postMessage({'properties' : properties});

@@ -1,7 +1,7 @@
 import { View } from './view.js'
 import { Image, Label, Button } from './widgets.js'
 
-import { Node } from './nodes/node.js'
+import { ScreenNode, AdditionalListNode, ExtensionNode, AssetNode } from './nodes/node.js'
 import { NodeList } from './nodes/node_list.js'
 
 import { AIAReader } from '../unchive/aia_reader.js'
@@ -10,6 +10,8 @@ export class Screen extends View {
   constructor() {
     super('DIV');
 
+		this.helpText = new Label('Upload a project using the button in the top-right');
+
     this.titleBar = new TitleBar();
     this.addView(this.titleBar);
 
@@ -17,21 +19,7 @@ export class Screen extends View {
     this.nodeListContainer.addStyleName('node-list-container');
 
     this.addView(this.nodeListContainer);
-
-    this.primaryNodeList = new NodeList();
-    this.primaryNodeList.addStyleName('node-list--primary');
-    this.nodeListContainer.addView(this.primaryNodeList);
-
-    this.secondaryNodeList = new NodeList();
-    this.secondaryNodeList.addStyleName('node-list--secondary');
-    this.nodeListContainer.addView(this.secondaryNodeList);
-
-    this.tertiaryNodeList = new NodeList();
-    this.tertiaryNodeList.addStyleName('node-list--tertiary');
-    this.nodeListContainer.addView(this.tertiaryNodeList);
-
-    this.primaryNodeList.addView(new Node());
-
+    this.initializeNodeLists();
     this.handleURLData();
   }
 
@@ -54,13 +42,63 @@ export class Screen extends View {
     this.req = getReqParams();
 
     if(this.req.url != undefined) {
-      var aiProject = await AIAReader.read(this.req.url);
-      console.log(aiProject);
+			this.helpText.setText('Loading project...');
+      this.openProject(await AIAReader.read(this.req.url));
     }
 
     if(this.req.embedded == 'true') {
       this.titleBar.setVisible(false);
     }
+  }
+
+  async openProject(project) {
+		console.log(project);
+    this.initializeNodeLists();
+    for(let screen of project.screens) {
+      this.primaryNodeList.addNodeAsync(ScreenNode.promiseNode(screen));
+    }
+
+    this.primaryNodeList.addNodeAsync(AdditionalListNode.promiseNode(
+			'Extensions',
+			project.extensions,
+			function(extensions) {
+				for(let extension of extensions) {
+					this.chainNodeList.addNode(new ExtensionNode(
+						extension.descriptorJSON.name,
+						extension.name,
+						extension.descriptorJSON.helpString));
+				}
+			}));
+    this.primaryNodeList.addNodeAsync(AdditionalListNode.promiseNode(
+			'Assets',
+			project.assets,
+			function(assets) {
+				for(let asset of assets) {
+					this.chainNodeList.addNode(new AssetNode(
+						asset.name,
+						asset.type,
+						asset.blob.size,
+						asset.getURL()
+					));
+				}
+			}
+		));
+    //this.primaryNodeList.addNodeAsync(AdditionalListNode.promiseNode('Summary'));
+		this.helpText.setText('Click on a Screen to view its details');
+  }
+
+  initializeNodeLists() {
+    this.primaryNodeList = new NodeList();
+    this.primaryNodeList.addStyleName('node-list--primary');
+
+    this.nodeLists = [this.primaryNodeList];
+    this.nodeListContainer.clear();
+    this.nodeListContainer.addView(this.primaryNodeList);
+
+		this.helpPanel = new View('DIV');
+		this.helpPanel.addView(this.helpText);
+		this.helpPanel.addStyleName('help-panel');
+		this.nodeListContainer.addView(this.helpPanel);
   }
 }
 
@@ -78,6 +116,17 @@ class TitleBar extends View {
 
     this.uploadButton = new Button('unarchive', true);
     this.uploadButton.addStyleName('title-bar__upload-button');
+
+		var uploadInput = new View('INPUT');
+		uploadInput.domElement.type = 'file';
+
+		uploadInput.domElement.addEventListener('change', async (event) => {
+			RootPanel.openProject(await AIAReader.read(event.target.files[0]));
+		});
+
+		this.uploadButton.addClickListener((event) => {
+			uploadInput.domElement.click();
+		});
 
     this.addView(this.logo);
     this.addView(this.title);

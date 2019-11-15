@@ -12,14 +12,13 @@
   </body>
   <script type="text/javascript" src="lib/zip.js"></script>
   <script type="text/javascript" src="lib/zip-ext.js"></script>
-  <script type="text/javascript" src="lib/xml2json.js"></script>
   <script type="module">
     import { Screen } from './views/screen.js';
 
     zip.workerScriptsPath = "lib/";
 
-    let rootPanel = new Screen();
-    rootPanel.setStyleName('root-panel');
-    document.body.appendChild(rootPanel.domElement);
+    window.RootPanel = new Screen();
+    RootPanel.setStyleName('root-panel');
+    document.body.appendChild(RootPanel.domElement);
   </script>
 </html>

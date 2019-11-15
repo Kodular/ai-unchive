@@ -48,4 +48,8 @@ export class Button extends View {
       this.domElement.innerHTML = this.isIconButton ? '<i class="material-icons">' + text + '</>' : text;
       this.text = text;
   }
+
+	addClickListener(listener) {
+		this.domElement.addEventListener('click', listener);
+	}
 }

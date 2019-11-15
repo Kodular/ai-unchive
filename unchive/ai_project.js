@@ -1,10 +1,33 @@
 import { DescriptorGenerator } from '../unchive/aia_reader.js'
 
 export class AIProject {
-  constructor() {
+  constructor(name) {
+    this.name = name;
     this.screens = [];
     this.extensions = [];
     this.assets = [];
+  }
+
+  addAssets(assets) {
+    for(let asset of assets)
+      this.addAsset(asset);
+  }
+
+  addScreens(screens) {
+    for(let screen of screens)
+      this.addScreen(screen);
+  }
+
+  addExtensions(extensions) {
+    for(let extension of extensions)
+      this.addExtension(extension);
+  }
+
+  addAsset(asset) {
+    if(asset instanceof AIAsset)
+      this.assets.push(asset);
+    else
+      throw new TypeError('Attempt to add ' + typeof asset + ' to AIProject');
   }
 
   addScreen(screen) {
@@ -12,29 +35,6 @@ export class AIProject {
         this.screens.push(screen);
     else
         throw new TypeError('Attempt to add ' + typeof screen + ' to AIProject');
-  }
-
-  async addScreens(screensArray) {
-    for(let screen of await screensArray)
-      this.addScreen(screen);
-  }
-
-  addExtensions(extensions) {
-    this.extensions = extensions;
-  }
-
-  removeScreen(screen) {
-    if(screen instanceof AIScreen)
-      ;// TODO: Add splice code
-    else
-      throw new TypeError('Attempt to remove ' + typeof screen + ' from AIProject');
-  }
-
-  addAsset(asset) {
-    if(screen instanceof AIAsset)
-      this.assets.push(asset);
-    else
-      throw new TypeError('Attempt to add ' + typeof asset + ' to AIProject');
   }
 
   addExtension(extension) {
@@ -50,13 +50,14 @@ export class AIProject {
 }
 
 export class AIScreen {
-  constructor(scm, blk, name, project) {
+  async init(scm, blk, name, project) {
     this.addToProject(project);
-    this.generateSchemeData(scm);
+    this.form = await this.generateSchemeData(scm);
     this.generateBlocks(blk);
     this.name = name;
     if(name == null)
       throw new TypeError('Screen name cannot be null!');
+		return this;
   }
 
   addToProject(project) {
@@ -66,22 +67,22 @@ export class AIScreen {
       throw new TypeError('Attempt to set ' + typeof project + ' as project of AIScreen');
   }
 
-  generateSchemeData(scmJSON) {
+  async generateSchemeData(scmJSON) {
     var componentsJSON = JSON.parse(scmJSON.substring(9, scmJSON.length - 3));
-    this.form = this.generateComponent(componentsJSON.Properties);
+     return this.generateComponent(componentsJSON.Properties);
   }
 
   async generateComponent(componentJSON) {
-    var extType = (await this.project.extensions).find(x => x.name.split('.').pop() == componentJSON.$Type);
+    var extType = this.project.extensions.find(x => x.name.split('.').pop() == componentJSON.$Type);
     if(extType != undefined)
         var customDescriptorJSON = extType.descriptorJSON;
 
     var component = new Component(
       componentJSON.$Name,
       componentJSON.$Type,
-      componentJSON.Uuid || 0, //Screens do not have a Uuid property.
-      componentJSON,
-      customDescriptorJSON || null);
+      componentJSON.Uuid || 0); //Screens do not have a Uuid property.
+
+		component.properties = await component.loadProperties(componentJSON, customDescriptorJSON || null);
 
     for(let childComponent of componentJSON.$Components || []) {
       component.addChild(await this.generateComponent(childComponent));
@@ -90,43 +91,44 @@ export class AIScreen {
   }
 
   generateBlocks(blkXml) {
-    // TODO: convert xml to json, and then to block objects
     this.blocks = new DOMParser().parseFromString(blkXml, 'text/xml');
   }
 }
 
 class Component {
-  constructor(name, type, uid, propertiesJSON, customDescriptorJSON) {
+  constructor(name, type, uid) {
     this.name = name;
     this.type = type;
     this.uid = uid;
     this.children = [];
-    this.package = 'com.google.appinventor.components.runtime';
-    this.customDescriptorJSON = customDescriptorJSON;
-
-    this.loadProperties(propertiesJSON);
   }
 
-  async loadProperties(properties) {
-    if(AIProject.descriptorJSON == undefined) {
-      AIProject.descriptorJSON = await DescriptorGenerator.generate();
-    }
+  loadProperties(properties, customDescriptorJSON) {
+		return new Promise(async (resolve, reject) => {
+			if(AIProject.descriptorJSON == undefined) {
+	      AIProject.descriptorJSON = await DescriptorGenerator.generate();
+	    }
 
-    //console.log('Loading properties of ' + this.name);
-    try {
-      var testvar = (this.customDescriptorJSON || AIProject.descriptorJSON.find(x => x.type == this.package + '.' + this.type)).properties || []
-    } catch(e) {
-      console.log(this.name)
-    }
-    var propertyLoader = new Worker('unchive/property_processor.js');
-    propertyLoader.postMessage({
-      'propertyJSON' : properties,
-      'descriptorJSON' : (this.customDescriptorJSON || AIProject.descriptorJSON.find(x => x.type == this.package + '.' + this.type)).properties || []
-    });
-    propertyLoader.addEventListener('message', (event) => {
-      this.properties = event.data.properties;
-      propertyLoader.terminate();
-    })
+	    var propertyLoader = new Worker('unchive/property_processor.js');
+	    try {
+	      propertyLoader.postMessage({
+	        'type' : this.name,
+	        'propertyJSON' : properties,
+	        'descriptorJSON' : (customDescriptorJSON || AIProject.descriptorJSON.find(x => x.type == 'com.google.appinventor.components.runtime.' + this.type)).properties || []
+	      });
+	    } catch(error) {
+	      console.log('Error in ' + this.name + '(' + this.uid + ' / ' + this.type + '), message: ' + error.message);
+				this.faulty = true;
+				resolve([]);
+	      propertyLoader.terminate();
+	    }
+
+	    propertyLoader.addEventListener('message', (event) => {
+	      resolve(event.data.properties);
+	      propertyLoader.terminate();
+	    });
+		});
+
   }
 
   addChild(component) {
@@ -137,9 +139,27 @@ class Component {
   }
 }
 
-export class Extension {
+export class AIExtension {
   constructor(name, descriptorJSON) {
     this.name = name;
     this.descriptorJSON = descriptorJSON;
+  }
+}
+
+export class AIAsset {
+  constructor(name, type, blob) {
+    this.name = name;
+    this.type = type;
+    this.blob = blob;
+  }
+
+  getURL() {
+    if(this.url == undefined)
+      this.url = URL.createObjectURL(this.blob)
+    return this.url;
+  }
+
+  revokeURL() {
+    URL.revokeObjectURL(this.url);
   }
 }
