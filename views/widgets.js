@@ -53,3 +53,13 @@ export class Button extends View {
 		this.domElement.addEventListener('click', listener);
 	}
 }
+
+export class Downloader {
+	static downloadURL(url, fileName) {
+		var anchor = new View('A');
+		anchor.domElement.href = url;
+		anchor.domElement.target = '_blank';
+		anchor.domElement.download = fileName;
+		anchor.domElement.click();
+	}
+}

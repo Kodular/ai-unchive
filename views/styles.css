@@ -37,8 +37,13 @@ body {
   flex-grow: 2;
 }
 
-.title-bar__upload-button i {
+.title-bar__upload-button i,
+.title-bar__export-button i {
   color: var(--primary);
+}
+
+.title-bar__export-button {
+	margin-left: 10px;
 }
 
 .node-list-container {

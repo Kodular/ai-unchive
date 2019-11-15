@@ -1,5 +1,5 @@
 import { View } from '../view.js'
-import { Label } from '../widgets.js'
+import { Label, Downloader } from '../widgets.js'
 
 import { NodeList } from './node_list.js'
 
@@ -306,12 +306,7 @@ export class AssetNode extends Node {
 		preview.setAttribute('src', url);
 		preview.addStyleName('asset-preview');
 		preview.domElement.addEventListener('click', (e) => {
-			var anchor = new View('A');
-			anchor.domElement.href = url;
-			anchor.domElement.target = '_blank';
-			anchor.domElement.download = this.assetName;
-
-			anchor.domElement.click();
+			Downloader.downloadURL(url, this.assetName);
 		});
 
 		this.addView(preview);

@@ -1,5 +1,5 @@
 import { View } from './view.js'
-import { Image, Label, Button } from './widgets.js'
+import { Image, Label, Button, Downloader } from './widgets.js'
 
 import { ScreenNode, AdditionalListNode, ExtensionNode, AssetNode } from './nodes/node.js'
 import { NodeList } from './nodes/node_list.js'
@@ -43,7 +43,12 @@ export class Screen extends View {
 
     if(this.req.url != undefined) {
 			this.helpText.setText('Loading project...');
-      this.openProject(await AIAReader.read(this.req.url));
+			if(this.req.url.split('.').pop() == 'aia') {
+      	this.openProject(await AIAReader.read(this.req.url));
+			} else if(this.req.url.split('.').pop() == 'aiv') {
+				let response = await fetch(this.req.url);
+				this.openProject(Flatted.parse(JSON.stringify(await response.json())));
+			}
     }
 
     if(this.req.embedded == 'true') {
@@ -52,7 +57,8 @@ export class Screen extends View {
   }
 
   async openProject(project) {
-		console.log(project);
+		this.project = project;
+		this.titleBar.exportButton.setVisible(true);
     this.initializeNodeLists();
     for(let screen of project.screens) {
       this.primaryNodeList.addNodeAsync(ScreenNode.promiseNode(screen));
@@ -131,5 +137,18 @@ class TitleBar extends View {
     this.addView(this.logo);
     this.addView(this.title);
     this.addView(this.uploadButton);
+
+		this.exportButton = new Button('cloud_download', true);
+		this.exportButton.addStyleName('title-bar__export-button');
+
+		this.exportButton.addClickListener((event) => {
+			console.log(Flatted.stringify(RootPanel.project));
+			Downloader.downloadURL(
+				'data:application/json;charset=utf-8,'+ encodeURIComponent(Flatted.stringify(RootPanel.project)),
+				'project.aiv'
+			)
+		});
+		this.exportButton.setVisible(false);
+		this.addView(this.exportButton);
   }
 }
