@@ -54,6 +54,7 @@ export class Screen extends View {
 
     if(this.req.embed == 'true') {
       this.titleBar.setVisible(false);
+			this.addStyleName('embed');
     }
   }
 

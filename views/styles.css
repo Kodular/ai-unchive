@@ -5,6 +5,7 @@
 body {
   margin: 0;
   font-family: Roboto;
+	background: #FFF;
 }
 
 .root-panel {
@@ -14,6 +15,10 @@ body {
   flex-wrap: nowrap;
   align-content: stretch;
   flex-direction: column;
+}
+
+.root-panel.embed {
+	border: 1px solid #DDD;
 }
 
 .title-bar {
