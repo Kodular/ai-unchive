@@ -27,7 +27,7 @@ export class Node extends View {
 
   setSubText(text) {
     this.subText = text;
-    this.captionView.setHTML(caption + '<br><small>' + this.subText + '</small>');
+    this.captionView.setHTML(this.caption + '<br><small>' + text + '</small>');
   }
 
   setNodeList(nodeList) {
@@ -286,10 +286,12 @@ export class ExtensionNode extends Node {
 
 export class AssetNode extends Node {
 	constructor(assetName, assetType, assetSize, assetURL) {
-		super(assetName + '.' + assetType, AssetNode.formatAssetSize(assetSize));
+		AssetNode.initConstants();
+		super(assetName + '.' + assetType, '');
 		this.assetName = assetName + '.' + assetType;
+		this.assetSize = assetSize;
 		this.generatePreview(assetURL, assetType);
-		this.addStyleName('unchive-extension-node');
+		this.addStyleName('unchive-asset-node');
 	}
 
 	generatePreview(url, type) {
@@ -310,6 +312,13 @@ export class AssetNode extends Node {
 		});
 
 		this.addView(preview);
+
+		if(this.assetSize > 15000000) {
+			this.addStyleName('unchive-asset--large-node');
+			this.setSubText('<i class="material-icons">warning</i>' + AssetNode.formatAssetSize(this.assetSize));
+		} else {
+			this.setSubText(AssetNode.formatAssetSize(this.assetSize));
+		}
 	}
 
 	static initConstants() {
@@ -320,7 +329,6 @@ export class AssetNode extends Node {
 	}
 
 	static formatAssetSize(size) {
-		AssetNode.initConstants();
 		var unitCount = 0
 		while(size > 1000) {
 			size /= 1000;
@@ -328,4 +336,8 @@ export class AssetNode extends Node {
 		}
 		return parseInt(size) + this.units[unitCount];
 	}
+}
+
+export class SummaryNode extends PropertyNode {
+
 }

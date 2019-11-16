@@ -30,4 +30,10 @@ export class NodeList extends View {
 		if(node != undefined)
 			node.addStyleName('unchive-node--active');
   }
+
+	setVisible(visible) {
+		super.setVisible(visible);
+		if(visible)
+			setTimeout(()=>{this.domElement.scrollIntoView({ behavior: 'smooth', inline : 'end'})}, 100);
+	}
 }

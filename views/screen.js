@@ -1,7 +1,7 @@
 import { View } from './view.js'
 import { Image, Label, Button, Downloader } from './widgets.js'
 
-import { ScreenNode, AdditionalListNode, ExtensionNode, AssetNode } from './nodes/node.js'
+import { ScreenNode, AdditionalListNode, ExtensionNode, AssetNode, SummaryNode } from './nodes/node.js'
 import { NodeList } from './nodes/node_list.js'
 
 import { AIAReader } from '../unchive/aia_reader.js'
@@ -46,12 +46,13 @@ export class Screen extends View {
 			if(this.req.url.split('.').pop() == 'aia') {
       	this.openProject(await AIAReader.read(this.req.url));
 			} else if(this.req.url.split('.').pop() == 'aiv') {
+				this.aiv = true;
 				let response = await fetch(this.req.url);
 				this.openProject(Flatted.parse(JSON.stringify(await response.json())));
 			}
     }
 
-    if(this.req.embedded == 'true') {
+    if(this.req.embed == 'true') {
       this.titleBar.setVisible(false);
     }
   }
@@ -83,13 +84,21 @@ export class Screen extends View {
 					this.chainNodeList.addNode(new AssetNode(
 						asset.name,
 						asset.type,
-						asset.blob.size,
-						asset.getURL()
+						asset.size,
+						RootPanel.aiv ? 'unknown.unknown' : asset.getURL()
 					));
 				}
 			}
 		));
-    //this.primaryNodeList.addNodeAsync(AdditionalListNode.promiseNode('Summary'));
+    this.primaryNodeList.addNodeAsync(AdditionalListNode.promiseNode(
+			'Summary',
+			project.summary,
+			function(summary) {
+				for(let summaryItem of summary) {
+					this.chainNodeList.addNode(new SummaryNode(summaryItem.title, summaryItem.value));
+				}
+			}
+		));
 		this.helpText.setText('Click on a Screen to view its details');
   }
 
@@ -129,6 +138,7 @@ class TitleBar extends View {
 
 		uploadInput.domElement.addEventListener('change', async (event) => {
 			if(uploadInput.domElement.value.split('.').pop() == 'aiv') {
+				RootPanel.aiv = true;
 				let response = await fetch(URL.createObjectURL(event.target.files[0]));
 				RootPanel.openProject(Flatted.parse(JSON.stringify(await response.json())));
 			}	else if(uploadInput.domElement.value.split('.').pop() == 'aia') {

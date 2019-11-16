@@ -45,7 +45,39 @@ export class AIProject {
   }
 
   generateSummary() {
+		this.summary = [];
+		this.summary.push({
+			'title' : 'Number of screens',
+			'value' : this.screens.length
+		});
 
+		var totalBlocks = 0;
+		for(let screen of this.screens) {
+			totalBlocks += screen.blocks.getElementsByTagName('block').length;
+		}
+		this.summary.push({
+			'title' : 'Number of blocks',
+			'value' : totalBlocks
+		});
+
+		this.summary.push({
+			'title' : 'Number of assets',
+			'value' : this.assets.length
+		});
+
+		var totalSize = 0;
+		for(let asset of this.assets) {
+			totalSize += asset.size;
+		}
+		this.summary.push({
+			'title' : 'Size of assets',
+			'value' : totalSize + 'B'
+		});
+
+		this.summary.push({
+			'title' : 'Number of extensions',
+			'value' : this.extensions.length
+		});
   }
 }
 
@@ -151,6 +183,7 @@ export class AIAsset {
     this.name = name;
     this.type = type;
     this.blob = blob;
+		this.size = blob.size;
   }
 
   getURL() {

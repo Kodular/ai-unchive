@@ -21,7 +21,7 @@ body {
   flex-direction: row;
   align-items: center;
   padding: 0 20px;
-  height: 50px;
+  flex: 0 0 50px;
   border-bottom: 1px solid #DDD;
 }
 
@@ -52,7 +52,7 @@ body {
   flex-wrap: nowrap;
   align-items: stretch;
   width: 100vw;
-  height: calc(100vh - 50px);
+  height: 100%;
 	overflow-x: scroll;
 }
 
@@ -60,7 +60,7 @@ body {
   overflow-x: hidden;
   height: 100%;
   border-right: 1px solid #DDD;
-  width: 300px;
+  flex: 0 0 300px;
 }
 
 .node-list--full-width {
@@ -89,6 +89,7 @@ body {
 .node-list__help-text {
 	color: #666;
 	font-size: 16px;
+	text-align: center;
 }
 
 .help-panel:last-child {
@@ -102,6 +103,10 @@ body {
   cursor: pointer;
 	color: var(--primary);
 	transition: filter 0.2s;
+}
+
+.asset-preview[src="unknown.unknown"] {
+	display: none;
 }
 
 .asset-preview:not(p):hover {
@@ -146,6 +151,7 @@ body {
   padding: 10px 20px;
   font-size: 15px;
   transition: background 0.2s;
+	user-select: none;
 }
 
 .unchive-node--active {
@@ -191,7 +197,8 @@ body {
 }
 
 .unchive-property-node,
-.unchive-extension-node {
+.unchive-extension-node,
+.unchive-asset-node {
 	flex-direction: column;
 	align-items: flex-start;
 }
@@ -199,6 +206,16 @@ body {
 .unchive-extension-node p:last-child {
 	font-size: 14px;
 	margin-top: 10px;
+}
+
+.unchive-asset--large-node {
+	background-color: rgba(255, 215, 0, 0.2);
+}
+
+.unchive-asset--large-node small i {
+	font-size: 12px;
+	vertical-align: text-top;
+	margin-right: 5px;
 }
 
 .unchive-property-node__property-name {
