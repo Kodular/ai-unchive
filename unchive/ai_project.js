@@ -196,3 +196,57 @@ export class AIAsset {
     URL.revokeObjectURL(this.url);
   }
 }
+
+export class BlocklyWorkspace {
+	constructor(blocks) {
+	  this.workspaceView = new View('DIV');
+		this.loaded = false;
+    this.blocks = blocks;
+    this.validTypes = ['global_declaration', 'component_event', 'procedures_defnoreturn', 'procedures_defreturn'];
+	}
+
+	initializeWorkspace() {
+		if(this.loaded) return;
+		this.loaded = true;
+		this.workspace = Blockly.inject(this.workspaceView.domElement, {
+      toolbox: false,
+      trashcan: false,
+      readOnly: true,
+      scrollbars: false
+    });
+
+    this.workspace.setScale(1);
+		this.workspace.getDescriptor = function(componentType) {
+			let descriptor =  AIProject.descriptorJSON.find(x => x.type == 'com.google.appinventor.components.runtime.' + componentType);
+			if(descriptor == undefined)
+				for(let extension of RootPanel.project.extensions)
+					if(extension.name.split('.').pop() == componentType)
+						return extension.descriptorJSON;
+			return descriptor;
+		}
+    this.addBlocksToWorkspace()
+	}
+
+	addBlocksToWorkspace() {
+    try {
+      Blockly.Xml.domToBlock(this.blocks, this.workspace).setCollapsed(false);
+    } catch(error) {
+      this.faulty = true;
+    } finally {
+      if(this.validTypes.indexOf(this.blocks.getAttribute('type')) == -1)
+        this.faulty = true;
+    }
+		let metrics = this.workspace.getMetrics();
+		this.workspaceView.setAttribute(
+			'style',
+			'height: ' + metrics.contentHeight + 'px;' +
+			'width: ' + metrics.contentWidth + 'px;'
+		);
+
+		Blockly.svgResize(this.workspace);
+	}
+
+	getWorkspaceView() {
+		return this.workspaceView;
+	}
+}
