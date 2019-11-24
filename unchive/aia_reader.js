@@ -31,7 +31,6 @@ export class AIAReader {
                   x.filename.split('/')[2] == undefined)
               )
             );
-						project.generateSummary();
             resolve(project);
           }
         });
