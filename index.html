@@ -11,18 +11,28 @@
   <body>
 
   </body>
-  <script type="text/javascript" src="lib/zip.js"></script>
-  <script type="text/javascript" src="lib/zip-ext.js"></script>
-	<script type="text/javascript" src="https://unpkg.com/flatted@2.0.1/min.js">
-
-	</script>
+  <script type="text/javascript" src="lib/zip/zip.js"></script>
+  <script type="text/javascript" src="lib/zip/zip-ext.js"></script>
+	<script defer type="text/javascript" src="lib/flatted/flatted.min.js"></script>
+  <script defer type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="module">
     import { Screen } from './views/screen.js';
+		import { URLHandler, ScriptLoader } from './views/widgets.js'
 
-    zip.workerScriptsPath = "lib/";
+    ScriptLoader.loadScript('i18n/js/' + (URLHandler.getReqParams().locale || 'en') + '.js', () => {
+      window.Messages = Messages;
 
-    window.RootPanel = new Screen();
-    RootPanel.setStyleName('root-panel');
-    document.body.appendChild(RootPanel.domElement);
+      ScriptLoader.loadScript('lib/blockly/blockly_compressed.js', () => {
+        ScriptLoader.loadScript('lib/blockly/blocks_compressed.js');
+      });
+
+	    zip.workerScriptsPath = "lib/zip/";
+	    window.RootPanel = new Screen();
+	    RootPanel.setStyleName('root-panel');
+      RootPanel.handleURLData();
+	    document.body.appendChild(RootPanel.domElement);
+
+      google.charts.load('current', {'packages':['corechart']});
+    });
   </script>
 </html>
