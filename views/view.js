@@ -41,6 +41,14 @@ export class View {
     this.domElement.getAttribute(attributeName);
   }
 
+	setId(id) {
+		this.setAttribute('id', id);
+	}
+
+	getId() {
+		return this.getAttribute('id');
+	}
+
   setVisible(visible) {
     if(visible) {
       this.domElement.style.display = this.cacheDisplayStyle;
