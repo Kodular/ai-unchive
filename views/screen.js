@@ -1,10 +1,12 @@
 import { View } from './view.js'
-import { Image, Label, Button, Downloader } from './widgets.js'
+import { Image, Label, Button, Dialog, Downloader, URLHandler } from './widgets.js'
 
-import { ScreenNode, AdditionalListNode, ExtensionNode, AssetNode, SummaryNode } from './nodes/node.js'
+import { ScreenNode, AdditionalListNode, ExtensionNode, AssetNode } from './nodes/node.js'
 import { NodeList } from './nodes/node_list.js'
 
-import { AIAReader } from '../unchive/aia_reader.js'
+import { AIAReader, DescriptorGenerator } from '../unchive/aia_reader.js'
+import { AIProject } from '../unchive/ai_project.js'
+import { SummaryWriter } from '../unchive/summary_writer.js'
 
 export class Screen extends View {
   constructor() {
@@ -20,36 +22,15 @@ export class Screen extends View {
 
     this.addView(this.nodeListContainer);
     this.initializeNodeLists();
-    this.handleURLData();
   }
 
   async handleURLData() {
-    function getReqParams() {
-          var paramString = window.location.search.substr(1);
-          return paramString != null && paramString != "" ? makeArray(paramString) : {};
-    }
 
-    function makeArray(paramString) {
-        var params = {};
-        var paramArray = paramString.split("&");
-        for ( var i = 0; i < paramArray.length; i++) {
-            var tempArr = paramArray[i].split("=");
-            params[tempArr[0]] = tempArr[1];
-        }
-        return params;
-    }
+    this.req = URLHandler.getReqParams();
 
-    this.req = getReqParams();
-
-    if(this.req.url != undefined) {
+    if(this.req.url) {
 			this.helpText.setText('Loading project...');
-			if(this.req.url.split('.').pop() == 'aia') {
-      	this.openProject(await AIAReader.read(this.req.url));
-			} else if(this.req.url.split('.').pop() == 'aiv') {
-				this.aiv = true;
-				let response = await fetch(this.req.url);
-				this.openProject(Flatted.parse(JSON.stringify(await response.json())));
-			}
+			Opener.openURL(this.req.url);
     }
 
     if(this.req.embed == 'true') {
@@ -59,8 +40,14 @@ export class Screen extends View {
   }
 
   async openProject(project) {
+    if(AIProject.descriptorJSON == undefined) {
+      AIProject.descriptorJSON = await DescriptorGenerator.generate();
+    }
+		console.log(project);
 		this.project = project;
 		this.titleBar.exportButton.setVisible(true);
+    this.titleBar.title.setText(`${Messages.pageTitle} - ${project.name}.${this.aiv ? 'aiv' : 'aia'}`);
+
     this.initializeNodeLists();
     for(let screen of project.screens) {
       this.primaryNodeList.addNodeAsync(ScreenNode.promiseNode(screen));
@@ -93,12 +80,13 @@ export class Screen extends View {
 		));
     this.primaryNodeList.addNodeAsync(AdditionalListNode.promiseNode(
 			'Summary',
-			project.summary,
-			function(summary) {
-				for(let summaryItem of summary) {
-					this.chainNodeList.addNode(new SummaryNode(summaryItem.title, summaryItem.value));
-				}
-			}
+			null,
+			null,
+      function() {
+        if(this.loaded) return;
+        this.loaded = true;
+        SummaryWriter.generateSummmaryNodesForProject(project, this.chainNodeList);
+      }
 		));
 		this.helpText.setText('Click on a Screen to view its details');
   }
@@ -127,7 +115,7 @@ class TitleBar extends View {
     this.logo = new Image('logo.png');
     this.logo.addStyleName('title-bar__logo');
 
-    this.title = new Label('Unchive');
+    this.title = new Label(Messages.pageTitle);
     this.title.addStyleName('title-bar__title');
 
     this.uploadButton = new Button('unarchive', true);
@@ -138,13 +126,7 @@ class TitleBar extends View {
 		uploadInput.domElement.accept = '.aia,.aiv'
 
 		uploadInput.domElement.addEventListener('change', async (event) => {
-			if(uploadInput.domElement.value.split('.').pop() == 'aiv') {
-				RootPanel.aiv = true;
-				let response = await fetch(URL.createObjectURL(event.target.files[0]));
-				RootPanel.openProject(Flatted.parse(JSON.stringify(await response.json())));
-			}	else if(uploadInput.domElement.value.split('.').pop() == 'aia') {
-				RootPanel.openProject(await AIAReader.read(event.target.files[0]));
-			}
+			await Opener.openFile(uploadInput.domElement.value, event.target.files[0]);
 		});
 
 		this.uploadButton.addClickListener((event) => {
@@ -162,10 +144,53 @@ class TitleBar extends View {
 			console.log(Flatted.stringify(RootPanel.project));
 			Downloader.downloadURL(
 				'data:application/json;charset=utf-8,'+ encodeURIComponent(Flatted.stringify(RootPanel.project)),
-				'project.aiv'
+				`${RootPanel.project.name}.aiv`
 			)
 		});
 		this.exportButton.setVisible(false);
 		this.addView(this.exportButton);
+  }
+}
+
+class Opener {
+  static async openFile(fileDir, file) {
+    fileDir = fileDir.split('.');
+    let fileType = fileDir.pop();
+    let fileName = fileDir.pop().split('\\').pop();
+    let project;
+    if(fileType == 'aiv') {
+      project = await this.openAiv(URL.createObjectURL(file));
+    } else if(fileType == 'aia') {
+      project = await AIAReader.read(file);
+    } else {
+      new Dialog(`Unknown project type .${fileType}`, 'Project files should end with .aia or .aiv').open();
+      return;
+    }
+    project.name = fileName;
+    RootPanel.openProject(project);
+  }
+
+  static async openURL(url) {
+    let fileType = url.split('.').pop();
+    let fileName = url.split('.')[0].split('\\').pop();
+    console.log(url);
+    let project;
+    if(fileType == 'aia') {
+      project = await AIAReader.read(url);
+    } else if(fileType == 'aiv') {
+      project = await this.openAiv(url);
+    } else {
+      new Dialog(`Unknown project type .${fileType}`, 'Project files should end with .aia or .aiv').open();
+      return;
+    }
+
+    project.name = fileName;
+    RootPanel.openProject(project);
+  }
+
+  static async openAiv(url) {
+    RootPanel.aiv = true;
+    let response = await fetch(url);
+    return Flatted.parse(JSON.stringify(await response.json()));
   }
 }
