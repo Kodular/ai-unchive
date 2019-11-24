@@ -1,9 +1,9 @@
 import { View } from '../view.js'
-import { Label, Downloader } from '../widgets.js'
+import { Label, Downloader, AssetFormatter } from '../widgets.js'
 
 import { NodeList } from './node_list.js'
 
-import { BlockWriter } from '../../unchive/block_writer.js'
+import { BlocklyWorkspace } from '../../unchive/ai_project.js'
 
 export class Node extends View {
 
@@ -35,7 +35,7 @@ export class Node extends View {
   }
 }
 
-class HeaderNode extends Node {
+export class HeaderNode extends Node {
 
 	static async promiseNode(caption, icon) {
 		return new HeaderNode(caption, icon);
@@ -61,16 +61,12 @@ class PropertyNode extends Node {
 	}
 
 	constructor(propertyName, propertyValue) {
-		super(PropertyNode.addSpacesToName(propertyName));
+		super(Messages[propertyName + 'Properties'] || propertyName);
 		this.captionView.addStyleName('unchive-property-node__property-name');
 		this.valueView = new Label(propertyValue);
 		this.valueView.addStyleName('unchive-property-node__property-value');
 		this.addView(this.valueView);
 		this.addStyleName('unchive-property-node');
-	}
-
-	static addSpacesToName(name) {
-		return name.trim().split(/(?=[A-Z])/).join(' ');
 	}
 }
 
@@ -87,15 +83,19 @@ export class ChainedNode extends Node {
     this.arrowLabel.addStyleName('unchive-node__icon--right');
     this.addView(this.arrowLabel);
     this.domElement.addEventListener('click', (event) => {
-      if(this.chainNodeList.visible)
-        return;
-      this.setChainVisible(true);
-      if(this.containerNodeList.activeNode != undefined)
-        if(this.containerNodeList.activeNode instanceof ChainedNode)
-          this.containerNodeList.activeNode.setChainVisible(false);
-      this.containerNodeList.setActiveNode(this);
+      this.open();
     });
     this.initializeChain(data);
+  }
+
+  open() {
+    if(this.chainNodeList.visible)
+      return;
+    this.setChainVisible(true);
+    if(this.containerNodeList.activeNode)
+      if(this.containerNodeList.activeNode instanceof ChainedNode)
+        this.containerNodeList.activeNode.setChainVisible(false);
+    this.containerNodeList.setActiveNode(this);
   }
 
   setChainVisible(visible) {
@@ -121,12 +121,15 @@ export class ChainedNode extends Node {
 
 class ComponentNode extends ChainedNode {
 
-	static async promiseNode(caption, subText, data) {
-		return new ComponentNode(caption, subText, data);
+	static async promiseNode(caption, type, data) {
+		return new ComponentNode(caption, type, data);
 	}
 
-  constructor(caption, subText, componentData) {
-		super(caption, subText, componentData);
+  constructor(caption, type, componentData) {
+		super(
+      caption,
+      Messages[type.charAt(0).toLowerCase() + type.slice(1) + 'ComponentPallette'] || type,
+      componentData);
 		if(componentData.faulty) {
 				this.arrowLabel.setHTML('<i class="material-icons">error</i>');
 				this.addStyleName('unchive-node--faulty');
@@ -233,45 +236,71 @@ class WorkspaceNode extends ChainedNode {
 	}
 
 	constructor(blockData) {
-		super('Blocks', '', blockData);
+		super('Blocks', '', new DOMParser().parseFromString(blockData, 'text/xml'));
 		this.chainNodeList.addStyleName('node-list--full-width');
 	}
 
 	async generateChain(data) {
-		/*for(let block of data.getElementsByTagName('xml')[0].children) {
-			this.chainNodeList.addNodeAsync(BlockNode.promiseNode(
-				BlockWriter.writeBlock(block),
-				!BlockWriter.validGlobalBlock(block)
-			));
-		}*/
+		this.blockNodes = [];
+		for(let block of data.getElementsByTagName('xml')[0].children) {
+			if(block.tagName == 'block') {
+				let blockNode = BlockNode.promiseNode(block);
+				this.blockNodes.push(blockNode);
+				this.chainNodeList.addNodeAsync(blockNode);
+			}
+		}
+	}
+
+	setChainVisible(visible) {
+		super.setChainVisible(visible);
+		if(visible)
+		for(let blockNode of this.blockNodes) {
+			blockNode.then((node) => {
+				node.initializeWorkspace();
+			});
+		}
 	}
 }
 
 class BlockNode extends Node {
 
-	static async promiseNode(blockContents, faulty) {
-		return new BlockNode(blockContents, faulty);
+	static async promiseNode(blocks) {
+		return new BlockNode(blocks);
 	}
 
-	constructor(blockContents, faulty) {
-		super(blockContents);
+	constructor(blocks) {
+		super();
 		this.addStyleName('unchive-block-node');
-		if(faulty)
-			this.addStyleName('unchive-node--faulty');
+		this.workspace = new BlocklyWorkspace(blocks);
+		this.addView(this.workspace.getWorkspaceView());
+	}
+
+	initializeWorkspace() {
+    this.workspace.initializeWorkspace();
+    if(this.workspace.faulty)
+      this.addStyleName('unchive-block-node--faulty');
 	}
 }
 
 export class AdditionalListNode extends ChainedNode {
-	static async promiseNode(caption, data, generator) {
-		return new AdditionalListNode(caption, data, generator);
+	static async promiseNode(caption, data, generator, onOpen) {
+		return new AdditionalListNode(caption, data, generator, onOpen);
 	}
 
-	constructor(caption, data, generator) {
+	constructor(caption, data, generator, onOpen) {
 		super(caption, '', [data, generator]);
+    this.onOpen = onOpen;
 	}
 
 	async generateChain(data) {
-		data[1].call(this, data[0]);
+    if( data[0] && data[1])
+		  data[1].call(this, data[0]);
+	}
+
+  setChainVisible(visible) {
+		super.setChainVisible(visible);
+		if(visible && this.onOpen)
+		  this.onOpen();
 	}
 }
 
@@ -317,7 +346,7 @@ export class AssetNode extends Node {
 			this.addStyleName('unchive-asset--large-node');
 			this.setSubText('<i class="material-icons">warning</i>' + AssetNode.formatAssetSize(this.assetSize));
 		} else {
-			this.setSubText(AssetNode.formatAssetSize(this.assetSize));
+			this.setSubText(AssetFormatter.formatSize(this.assetSize));
 		}
 	}
 
@@ -325,19 +354,21 @@ export class AssetNode extends Node {
 		this.supportedImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp'];
 		this.supportedVideoTypes = ['mp4', 'avi', '3gp', 'flv', 'wmv'];
 		this.supportedAudioTypes = ['mp3', 'ogg', 'wav', 'wma'];
-		this.units = ['B', 'kB', 'mB', 'gB', 'tB', 'pB'];
-	}
-
-	static formatAssetSize(size) {
-		var unitCount = 0
-		while(size > 1000) {
-			size /= 1000;
-			unitCount++;
-		}
-		return parseInt(size) + this.units[unitCount];
 	}
 }
 
-export class SummaryNode extends PropertyNode {
+export class SummaryNode extends Node {
+
+  static async promiseNode(title, customHTML) {
+		return new SummaryNode(title, customHTML);
+	}
+
+  constructor(title, customHTML) {
+    super(title, '');
+    this.addStyleName('unchive-summary-node');
+    this.contentWrapper = new View('DIV');
+    this.addView(this.contentWrapper);
+    this.contentWrapper.domElement.innerHTML = customHTML;
+  }
 
 }
