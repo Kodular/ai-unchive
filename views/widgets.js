@@ -62,4 +62,81 @@ export class Downloader {
 		anchor.domElement.download = fileName;
 		anchor.domElement.click();
 	}
+
+  static downloadBlob(blob, fileName) {
+    var url = URL.createObjectURL(blob);
+    this.downloadURL(url, fileName);
+    URL.revokeObjectURL(url);
+  }
+
+  static downloadText(text, fileName) {
+    this.downloadBlob(new Blob([text], {type : 'text/html'}), fileName);
+  }
+}
+
+export class URLHandler {
+	static getReqParams() {
+		var paramString = window.location.search.substr(1);
+		return paramString != null && paramString != "" ? this.makeArray(paramString) : {};
+	}
+
+	static makeArray(paramString) {
+		var params = {};
+		var paramArray = paramString.split("&");
+		for ( var i = 0; i < paramArray.length; i++) {
+				var tempArr = paramArray[i].split("=");
+				params[tempArr[0]] = tempArr[1];
+		}
+		return params;
+	}
+}
+
+export class ScriptLoader {
+  static loadScript(url, onLoad) {
+    let s = document.createElement('SCRIPT');
+    s.src = url;
+    document.head.appendChild(s);
+		s.onload = () => {
+      if(onLoad)
+        onLoad();
+    }
+  }
+}
+
+export class AssetFormatter {
+  static formatSize(size) {
+    var unitCount = 0
+		while(size > 1000) {
+			size /= 1000;
+			unitCount++;
+		}
+		return parseInt(size) + ['B', 'kB', 'mB', 'gB', 'tB', 'pB'][unitCount];
+  }
+}
+
+export class Dialog extends View {
+  constructor(title, content) {
+    super('DIV');
+    this.addStyleName('unchive-dialog');
+    this.titleView = new Label(title, true);
+    this.titleView.addStyleName('unchive-dialog__title');
+    this.contentView = new Label(content, true);
+    this.contentView.addStyleName('unchive-dialog__content');
+
+    this.addView(this.titleView);
+    this.addView(this.contentView);
+
+    this.glass = new View('DIV');
+    this.glass.addStyleName('unchive-dialog__glass');
+  }
+
+  open() {
+    RootPanel.addView(this);
+    RootPanel.addView(this.glass);
+  }
+
+  close() {
+    RootPanel.removeView(this);
+    RootPanel.removeView(this.glass);
+  }
 }
