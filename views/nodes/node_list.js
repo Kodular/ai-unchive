@@ -6,6 +6,7 @@ export class NodeList extends View {
   constructor() {
     super('DIV');
     this.addStyleName('node-list');
+    this.nodes = [];
 
 		this.helpText = new Label('Nothing to see here!');
 		this.helpText.addStyleName('node-list__help-text');
@@ -21,6 +22,7 @@ export class NodeList extends View {
 	addNode(node) {
 		this.addView(node);
 		node.setNodeList(this);
+    this.nodes.push(node);
 	}
 
   setActiveNode(node) {
