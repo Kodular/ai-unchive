@@ -1,4 +1,5 @@
-import { DescriptorGenerator } from '../unchive/aia_reader.js'
+import { DescriptorGenerator } from './aia_reader.js'
+import { View } from '../views/view.js'
 
 export class AIProject {
   constructor(name) {
@@ -46,23 +47,24 @@ export class AIProject {
 
   generateSummary() {
 		this.summary = [];
+
 		this.summary.push({
-			'title' : 'Number of screens',
-			'value' : this.screens.length
+			'title' : 'Stats',
+			'customHTML' : this.screens.length
 		});
 
 		var totalBlocks = 0;
 		for(let screen of this.screens) {
-			totalBlocks += screen.blocks.getElementsByTagName('block').length;
+			//totalBlocks += screen.blocks.getElementsByTagName('block').length;
 		}
 		this.summary.push({
 			'title' : 'Number of blocks',
-			'value' : totalBlocks
+			'customHTML' : totalBlocks
 		});
 
 		this.summary.push({
 			'title' : 'Number of assets',
-			'value' : this.assets.length
+			'customHTML' : this.assets.length
 		});
 
 		var totalSize = 0;
@@ -71,12 +73,12 @@ export class AIProject {
 		}
 		this.summary.push({
 			'title' : 'Size of assets',
-			'value' : totalSize + 'B'
+			'customHTML' : totalSize + 'B'
 		});
 
 		this.summary.push({
 			'title' : 'Number of extensions',
-			'value' : this.extensions.length
+			'customHTML' : this.extensions.length
 		});
   }
 }
@@ -106,13 +108,20 @@ export class AIScreen {
 
   async generateComponent(componentJSON) {
     var extType = this.project.extensions.find(x => x.name.split('.').pop() == componentJSON.$Type);
-    if(extType != undefined)
-        var customDescriptorJSON = extType.descriptorJSON;
+    var origin;
+    if(extType != undefined) {
+      var customDescriptorJSON = extType.descriptorJSON;
+      origin = 'EXTENSION';
+    } else {
+      origin = 'BUILT-IN';
+    }
 
     var component = new Component(
       componentJSON.$Name,
       componentJSON.$Type,
-      componentJSON.Uuid || 0); //Screens do not have a Uuid property.
+      componentJSON.Uuid || 0, //Screens do not have a Uuid property.
+      origin
+    );
 
 		component.properties = await component.loadProperties(componentJSON, customDescriptorJSON || null);
 
@@ -123,16 +132,17 @@ export class AIScreen {
   }
 
   generateBlocks(blkXml) {
-    this.blocks = new DOMParser().parseFromString(blkXml, 'text/xml');
+    this.blocks = blkXml;
   }
 }
 
 class Component {
-  constructor(name, type, uid) {
+  constructor(name, type, uid, origin) {
     this.name = name;
     this.type = type;
     this.uid = uid;
     this.children = [];
+    this.origin = origin;
   }
 
   loadProperties(properties, customDescriptorJSON) {
