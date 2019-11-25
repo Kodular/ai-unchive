@@ -30,7 +30,7 @@
       () => {
         window.Messages = Messages;
         window.locales = [['English', 'en'], ['German', 'de'], ['Spanish', 'es']];
-        window.locale = window.locales.find(x => x[1] == URLHandler.getReqParams().locale);
+        window.locale = window.locales.find(x => x[1] == URLHandler.getReqParams().locale) || window.locales[0];
         console.log(window.locale);
 
         ScriptLoader.loadScript(fetchDir('lib/blockly/blockly_compressed.js'),
