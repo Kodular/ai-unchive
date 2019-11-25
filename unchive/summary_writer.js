@@ -151,11 +151,16 @@ class SummaryChart extends View {
 
     this.chart = new google.visualization.PieChart(this.domElement);
     this.chart.draw(data, this.options);
-    //console.log(this.chart.getImageURI());
   }
 
   getHTML() {
     return this.domElement.outerHTML;
+  }
+
+  getChartHTML() {
+    var html =  this.domElement.getElementsByTagName('svg')[0]
+    html.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    return html.outerHTML;
   }
 }
 
@@ -165,6 +170,7 @@ class SummaryHTMLWriter {
     setTimeout(() => {dialog.open()}, 1);
     setTimeout(() => {
       var html = [];
+      var blobs = [];
       html.push('<html>');
       html.push(`<head><title>Project Summary for ${project.name}</title></head>`);
       html.push('<body>');
@@ -174,15 +180,21 @@ class SummaryHTMLWriter {
 
       this.writeTOContents(html, project);
       this.writeStats(html, project);
-      this.writeInsights(html, project);
-      this.writeScreens(html, project);
+      this.writeInsights(html, blobs, project);
+      this.writeScreens(html, blobs, project);
       this.writeExtensions(html, project);
-      this.writeStyles(html);
+      this.writeStyles(html, blobs);
 
       html.push('</body></html>');
 
-      Downloader.downloadText(html.join(''), `${project.name}.html`);
+      blobs.push([
+        new Blob([html.join('')], {type: 'image/svg+xml'}),
+        `${project.name}.html`
+      ]);
+
+      this.zipAllBlobs(blobs);
       dialog.close();
+      console.log(blobs);
     }, 20);
   }
 
@@ -219,28 +231,46 @@ class SummaryHTMLWriter {
     html.push(SummaryWriter.generateMostUsed(project).replace(/<p/g, '<li').replace(/\/p>/g, '/li>'));
   }
 
-  static writeInsights(html, project) {
+  static writeInsights(html, blobs, project) {
     html.push('<a name="insights"></a>');
     html.push('<h3>Insights</h3>');
 
+    blobs.push([
+      new Blob([SummaryWriter.generateCodeShare(project).getChartHTML()], {type: 'image/svg+xml'}),
+      'code_share.svg'
+    ]);
+    blobs.push([
+      new Blob([SummaryWriter.generateAssetTypeShare(project).getChartHTML()], {type: 'image/svg+xml'}),
+      'asset_type_share.svg'
+    ]);
+    blobs.push([
+      new Blob([SummaryWriter.generateNativeShare(project).getChartHTML()], {type: 'image/svg+xml'}),
+      'native_share.svg'
+    ]);
+    blobs.push([
+      new Blob([SummaryWriter.getBlockTypeShare(project).getChartHTML()], {type: 'image/svg+xml'}),
+      'block_type_share.svg'
+    ]);
+
     html.push('<div style="display:inline-block">');
-    html.push(`<div class="chart">${SummaryWriter.generateCodeShare(project).getHTML()}`);
+    html.push('<div class="chart"><img src="code_share.svg"></img>');
     html.push('<p>Percentage of blocks by screen</p></div>');
 
-    html.push(`<div class="chart">${SummaryWriter.generateAssetTypeShare(project).getHTML()}`);
+    html.push('<div class="chart"><img src="asset_type_share.svg"></img>');
     html.push('<p>Types of assets by frequency</p></div>');
     html.push('</div>');
 
     html.push('<div style="display:inline-block">');
-    html.push(`<div class="chart">${SummaryWriter.generateNativeShare(project).getHTML()}`);
+    html.push('<div class="chart"><img src="native_share.svg"></img>');
     html.push('<p>Percentage of built-in components vs extensions used</p></div>');
 
-    html.push(`<div class="chart">${SummaryWriter.getBlockTypeShare(project).getHTML()}`);
+    html.push('<div class="chart"><img src="block_type_share.svg"></img>');
     html.push('<p>Percentage of blocks by type</p></div>');
     html.push('</div>');
   }
 
-  static writeScreens(html, project) {
+  static writeScreens(html, blobs, project) {
+    var i = 0;
     for(let node of RootPanel.primaryNodeList.nodes) {
       if(node instanceof ScreenNode) {
         html.push(`<a name="screen-${node.caption}"></a>`);
@@ -253,11 +283,26 @@ class SummaryHTMLWriter {
         html.push(`<h4>Blocks</h4>`);
         node.open();
         node.chainNodeList.nodes[1].open();
+        var j = 0;
         for(let blockNode of node.chainNodeList.nodes[1].chainNodeList.nodes) {
           blockNode.initializeWorkspace();
-          html.push(blockNode.domElement.children[1].children[0].innerHTML);
+          html.push(`<img src="block_${i}_${j}.svg">`);
+          var blockXML = blockNode.domElement.children[1].children[0].innerHTML.replace(/&nbsp;/g, ' ');
+          var styles = [];
+          styles.push(`<style>${document.head.children[0].innerHTML}</style>`);
+            styles.push('<style>.blocklyMainBackground{stroke-width:0}' +
+            '.blocklySvg{position:relative;width:100%}</style>');
+          blockXML = blockXML.substring(0, blockXML.indexOf('</svg>')) + styles.join('') + '</svg>';
+          blobs.push([
+            new Blob(
+              [blockXML],
+              {type: 'image/svg+xml'}),
+            `block_${i}_${j}.svg`
+          ]);
           html.push(`<p class="blk-cap"></p>`);
+          j++;
         }
+        i++;
       }
     }
     RootPanel.primaryNodeList.nodes.slice(-1)[0].open();
@@ -281,16 +326,33 @@ class SummaryHTMLWriter {
     }
   }
 
-  static writeStyles(html) {
-    html.push(`<style>${document.head.children[0].innerHTML}</style>`);
+  static writeStyles(html, blobs) {
     html.push('<style>body{max-width:1000px;margin:0 auto;border:1px solid #DDD;padding:20px;font-family: sans-serif}' +
-    '.blocklyMainBackground{stroke-width:0}' +
-    '.blocklySvg{position:relative;padding:20px 0}' +
     'span::before{content:": "}' +
     '.chart{display:block;margin:0 40px;}' +
-    '.blk-cap:empty::after{content:"[Caption]"; font-style:italic}' +
+    '.blk-cap:empty::after{content:"[Caption]"; font-style:italic;color:#888}' +
     '@media print{.blk-cap:empty{display:none}}' +
     '@page{margin-bottom:0}</style>');
     html.push('<script>document.designMode = "on"</script>');
+  }
+
+  static zipAllBlobs(blobs) {
+    zip.createWriter(new zip.BlobWriter("application/zip"), (zipWriter) => {
+      this.zipBlob(zipWriter, blobs);
+    });
+  }
+
+  static zipBlob(writer, blobs) {
+    if(blobs.length > 0) {
+      let blob = blobs.pop();
+      writer.add(blob[1], new zip.BlobReader(blob[0]),
+      () => {
+        this.zipBlob(writer, blobs);
+      });
+    } else {
+      writer.close((zippedFile) => {
+        Downloader.downloadBlob(zippedFile, 'project.zip');
+      });
+    }
   }
 }

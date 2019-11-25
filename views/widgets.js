@@ -54,6 +54,35 @@ export class Button extends View {
 	}
 }
 
+export class Dropdown extends View {
+  constructor(value, changeListener) {
+    super('SELECT');
+    this.domElement.value = value;
+    this.addStyleName('unchive-dropdown');
+    this.domElement.addEventListener('change', changeListener);
+  }
+
+  addDropdownItem(item) {
+    this.addView(item);
+  }
+
+  getValue() {
+    return this.domElement.value;
+  }
+
+  setValue(value) {
+    this.domElement.value = value;
+  }
+}
+
+export class DropdownItem extends View {
+  constructor(caption) {
+    super('OPTION');
+    this.domElement.innerHTML = caption;
+    this.addStyleName('unchive-dropdown-item');
+  }
+}
+
 export class Downloader {
 	static downloadURL(url, fileName) {
 		var anchor = new View('A');

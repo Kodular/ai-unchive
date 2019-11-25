@@ -1,5 +1,5 @@
 import { View } from './view.js'
-import { Image, Label, Button, Dialog, Downloader, URLHandler } from './widgets.js'
+import { Image, Label, Button, Dropdown, DropdownItem, Dialog, Downloader, URLHandler } from './widgets.js'
 
 import { ScreenNode, AdditionalListNode, ExtensionNode, AssetNode } from './nodes/node.js'
 import { NodeList } from './nodes/node_list.js'
@@ -149,6 +149,17 @@ class TitleBar extends View {
 		});
 		this.exportButton.setVisible(false);
 		this.addView(this.exportButton);
+
+    this.localeDropdown = new Dropdown('', (e) => {
+      window.location = '?locale=' + window.locales.find(x => x[0] == this.localeDropdown.getValue())[1];
+    });
+
+    for(let locale of window.locales) {
+      this.localeDropdown.addDropdownItem(new DropdownItem(locale[0]));
+    }
+    this.localeDropdown.setValue(window.locale[0]);
+		this.localeDropdown.addStyleName('title-bar__locale-dropdown');
+    this.addView(this.localeDropdown);
   }
 }
 

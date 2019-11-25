@@ -214,7 +214,7 @@ export class ScreenNode extends ContainerNode {
         x.name != 'TutorialURL' &&
         x.name != 'VersionCode' &&
         x.name != 'VersionName')
-    super(screen.name, 'Screen', screen);
+    super(screen.name, Messages.screenComponentPallette, screen);
   }
 
 	async generateChain(data) {

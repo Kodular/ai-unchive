@@ -308,6 +308,16 @@ body {
   margin-bottom: 10px;
 }
 
+.unchive-dropdown {
+  margin: 0 5px;
+  height: 30px;
+  border: 1px solid #DDD;
+  border-radius: 5px;
+  padding: 0 5px;
+  color: #444;
+  outline: none;
+}
+
 ::-webkit-scrollbar-track {
 	border: 1px solid #DDD;
 	border-right: 0;
