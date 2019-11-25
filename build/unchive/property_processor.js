@@ -1,0 +1,1 @@
+this.addEventListener("message",function(e){var a=e.data.propertyJSON,t=e.data.descriptorJSON,r=[];for(let e of t)a.hasOwnProperty(e.name)?r.push({name:e.name,value:a[e.name]}):r.push({name:e.name,value:e.defaultValue,editorType:e.editorType});this.postMessage({properties:r})},!1);
