@@ -216,7 +216,10 @@ export class BlocklyWorkspace {
 	}
 
 	initializeWorkspace() {
-		if(this.loaded) return;
+		if(this.loaded) {
+      this.resizeWorkspace();
+      return;
+    }
 		this.loaded = true;
 		this.workspace = Blockly.inject(this.workspaceView.domElement, {
       toolbox: false,
@@ -234,7 +237,8 @@ export class BlocklyWorkspace {
 						return extension.descriptorJSON;
 			return descriptor;
 		}
-    this.addBlocksToWorkspace()
+    this.addBlocksToWorkspace();
+    this.resizeWorkspace();
 	}
 
 	addBlocksToWorkspace() {
@@ -246,7 +250,10 @@ export class BlocklyWorkspace {
       if(this.validTypes.indexOf(this.blocks.getAttribute('type')) == -1)
         this.faulty = true;
     }
-		let metrics = this.workspace.getMetrics();
+	}
+
+  resizeWorkspace() {
+    let metrics = this.workspace.getMetrics();
 		this.workspaceView.setAttribute(
 			'style',
 			'height: ' + metrics.contentHeight + 'px;' +
@@ -254,7 +261,7 @@ export class BlocklyWorkspace {
 		);
 
 		Blockly.svgResize(this.workspace);
-	}
+  }
 
 	getWorkspaceView() {
 		return this.workspaceView;
