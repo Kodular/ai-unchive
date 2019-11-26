@@ -181,20 +181,21 @@ class SummaryHTMLWriter {
       this.writeTOContents(html, project);
       this.writeStats(html, project);
       this.writeInsights(html, blobs, project);
-      this.writeScreens(html, blobs, project);
-      this.writeExtensions(html, project);
-      this.writeStyles(html, blobs);
+      this.writeScreens(html, blobs, project).then(() => {
+        this.writeExtensions(html, project);
+        this.writeStyles(html, blobs);
 
-      html.push('</body></html>');
+        html.push('</body></html>');
 
-      blobs.push([
-        new Blob([html.join('')], {type: 'image/svg+xml'}),
-        `${project.name}.html`
-      ]);
+        blobs.push([
+          new Blob([html.join('')], {type: 'image/svg+xml'}),
+          `${project.name}.html`
+        ]);
 
-      this.zipAllBlobs(blobs);
-      dialog.close();
-      console.log(blobs);
+        this.zipAllBlobs(blobs);
+        dialog.close();
+        console.log(blobs);
+      });
     }, 20);
   }
 
@@ -269,10 +270,11 @@ class SummaryHTMLWriter {
     html.push('</div>');
   }
 
-  static writeScreens(html, blobs, project) {
+  static async writeScreens(html, blobs, project) {
     var i = 0;
     for(let node of RootPanel.primaryNodeList.nodes) {
       if(node instanceof ScreenNode) {
+        console.log(node.caption);
         html.push(`<a name="screen-${node.caption}"></a>`);
         html.push(`<h3>${node.caption}</h3>`);
         html.push(`<h4>Components</h4>`);
@@ -285,19 +287,19 @@ class SummaryHTMLWriter {
         node.chainNodeList.nodes[1].open();
         var j = 0;
         for(let blockNode of node.chainNodeList.nodes[1].chainNodeList.nodes) {
+          console.log(`<img src="block_${i}_${j}.png">`);
           blockNode.initializeWorkspace();
-          html.push(`<img src="block_${i}_${j}.svg">`);
+          html.push(`<img src="block_${i}_${j}.png">`);
           var blockXML = blockNode.domElement.children[1].children[0].innerHTML.replace(/&nbsp;/g, ' ');
           var styles = [];
           styles.push(`<style>${document.head.children[0].innerHTML}</style>`);
             styles.push('<style>.blocklyMainBackground{stroke-width:0}' +
             '.blocklySvg{position:relative;width:100%}</style>');
           blockXML = blockXML.substring(0, blockXML.indexOf('</svg>')) + styles.join('') + '</svg>';
+          var svgBlob = new Blob([blockXML], {type: 'image/svg+xml'});
           blobs.push([
-            new Blob(
-              [blockXML],
-              {type: 'image/svg+xml'}),
-            `block_${i}_${j}.svg`
+            await this.svgToPngBlob(svgBlob),
+            `block_${i}_${j}.png`
           ]);
           html.push(`<p class="blk-cap"></p>`);
           j++;
@@ -305,7 +307,31 @@ class SummaryHTMLWriter {
         i++;
       }
     }
+    console.log(' b');
     RootPanel.primaryNodeList.nodes.slice(-1)[0].open();
+  }
+
+  static svgToPngBlob(svgBlob) {
+    return new Promise((resolve, reject) => {
+      var url = URL.createObjectURL(svgBlob);
+      const svgImage = document.createElement('img');
+      svgImage.style.position = 'absolute';
+      svgImage.style.top = '-9999px';
+      document.body.appendChild(svgImage);
+
+      svgImage.onload = function () {
+        const canvas = document.createElement('canvas');
+        canvas.width = svgImage.clientWidth;
+        canvas.height = svgImage.clientHeight;
+        const canvasCtx = canvas.getContext('2d');
+        canvasCtx.drawImage(svgImage, 0, 0);
+        canvas.toBlob(function(pngBlob){
+          resolve(pngBlob);
+          document.body.removeChild(svgImage);
+        },'image/png');
+    };
+    svgImage.src = url;
+    });
   }
 
   static writeComponent(html, component) {
