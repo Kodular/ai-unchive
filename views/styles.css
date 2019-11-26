@@ -69,8 +69,9 @@ body {
   flex: 0 0 300px;
 }
 
-.node-list--full-width {
-	flex-grow: 2;
+.node-list--blocks-list {
+  flex: none;
+  min-width: calc(100vw - 603px);
 }
 
 .node-list__help-text {

@@ -237,7 +237,7 @@ class WorkspaceNode extends ChainedNode {
 
 	constructor(blockData) {
 		super('Blocks', '', new DOMParser().parseFromString(blockData, 'text/xml'));
-		this.chainNodeList.addStyleName('node-list--full-width');
+		this.chainNodeList.addStyleName('node-list--blocks-list');
 	}
 
 	async generateChain(data) {
