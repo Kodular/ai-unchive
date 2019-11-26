@@ -1,3 +1,14 @@
+/**
+ * A web worker that maps two JSON arrays.
+ *
+ *
+ * @file   This file defines the property_processor web worker used in
+ *         ai_project::Component::loadProperties.
+ * @author vishwas@kodular.io (Vishwas Adiga)
+ * @since  1.0.0
+ * @license
+ */
+
 this.addEventListener('message', function(e) {
   var propertyJSON = e.data.propertyJSON;
   var descriptorJSON = e.data.descriptorJSON;

@@ -1,14 +1,43 @@
-import { View } from './view.js'
-import { Image, Label, Button, Dropdown, DropdownItem, Dialog, Downloader, URLHandler } from './widgets.js'
+/**
+ * Defines classes that represent the top-layer interface of the page.
+ *
+ * @file   This file defines the Screen and Title classes.
+ * @author vishwas@kodular.io (Vishwas Adiga)
+ * @since  1.0.0
+ * @license
+ */
 
-import { ScreenNode, AdditionalListNode, ExtensionNode, AssetNode } from './nodes/node.js'
+import { View } from './view.js'
+import { Image, Label, Button, Dropdown, DropdownItem,
+  Dialog, Downloader, URLHandler } from './widgets.js'
+
+import { ScreenNode, AdditionalListNode,
+  ExtensionNode, AssetNode } from './nodes/node.js'
 import { NodeList } from './nodes/node_list.js'
 
 import { AIAReader, DescriptorGenerator } from '../unchive/aia_reader.js'
 import { AIProject } from '../unchive/ai_project.js'
 import { SummaryWriter } from '../unchive/summary_writer.js'
 
+/**
+ * Class that represents the root panel of the page.
+ *
+ * @since  1.0.0
+ * @access public
+ */
 export class Screen extends View {
+
+  /**
+   * Creates a new Screen object.
+   *
+   * @since 1.0.0
+   * @access public
+   *
+   * @class
+   * @augments View
+   *
+   * @return {Screen} New Screen object.
+   */
   constructor() {
     super('DIV');
 
@@ -24,8 +53,13 @@ export class Screen extends View {
     this.initializeNodeLists();
   }
 
+  /**
+   * Handles GET parameters passed in the URL of the page.
+   *
+   * @since 1.0.0
+   * @access private
+   */
   async handleURLData() {
-
     this.req = URLHandler.getReqParams();
 
     if(this.req.url) {
@@ -39,6 +73,14 @@ export class Screen extends View {
     }
   }
 
+  /**
+   * Opens a new App Inventor project.
+   *
+   * @since 1.0.0
+   * @access public
+   *
+   * @param {AIProject} project The project that is to be opened.
+   */
   async openProject(project) {
     if(AIProject.descriptorJSON == undefined) {
       AIProject.descriptorJSON = await DescriptorGenerator.generate();
@@ -46,13 +88,16 @@ export class Screen extends View {
 		console.log(project);
 		this.project = project;
 		this.titleBar.exportButton.setVisible(true);
-    this.titleBar.title.setText(`${Messages.pageTitle} - ${project.name}.${this.aiv ? 'aiv' : 'aia'}`);
+    this.titleBar.title.setText(
+      `${Messages.pageTitle} - ${project.name}.${this.aiv ? 'aiv' : 'aia'}`);
 
     this.initializeNodeLists();
     for(let screen of project.screens) {
+      // Add all screens asynchronously.
       this.primaryNodeList.addNodeAsync(ScreenNode.promiseNode(screen));
     }
 
+    // Add all extensions asynchronously.
     this.primaryNodeList.addNodeAsync(AdditionalListNode.promiseNode(
 			'Extensions',
 			project.extensions,
@@ -63,7 +108,9 @@ export class Screen extends View {
 						extension.name,
 						extension.descriptorJSON.helpString));
 				}
-			}));
+		}));
+
+    // Add all assets asynchronously.
     this.primaryNodeList.addNodeAsync(AdditionalListNode.promiseNode(
 			'Assets',
 			project.assets,
@@ -78,6 +125,8 @@ export class Screen extends View {
 				}
 			}
 		));
+
+    // Generate the summary asynchronously.
     this.primaryNodeList.addNodeAsync(AdditionalListNode.promiseNode(
 			'Summary',
 			null,
@@ -85,12 +134,20 @@ export class Screen extends View {
       function() {
         if(this.loaded) return;
         this.loaded = true;
-        SummaryWriter.generateSummmaryNodesForProject(project, this.chainNodeList);
+        SummaryWriter.generateSummmaryNodesForProject(
+          project,
+          this.chainNodeList);
       }
 		));
 		this.helpText.setText('Click on a Screen to view its details');
   }
 
+  /**
+   * Initialises the primary and secondary node lists of the screen.
+   *
+   * @since 1.0.0
+   * @access public
+   */
   initializeNodeLists() {
     this.primaryNodeList = new NodeList();
     this.primaryNodeList.addStyleName('node-list--primary');
@@ -106,7 +163,25 @@ export class Screen extends View {
   }
 }
 
+/**
+ * Class that represents the Screen's title bar.
+ *
+ * @since  1.0.0
+ * @access public
+ */
 class TitleBar extends View {
+
+  /**
+   * Creates a new TitleBar object.
+   *
+   * @since 1.0.0
+   * @access public
+   *
+   * @class
+   * @augments View
+   *
+   * @return {TitleBar} New TitleBar object.
+   */
   constructor() {
     super('DIV');
 
@@ -143,7 +218,8 @@ class TitleBar extends View {
 		this.exportButton.addClickListener((event) => {
 			console.log(Flatted.stringify(RootPanel.project));
 			Downloader.downloadURL(
-				'data:application/json;charset=utf-8,'+ encodeURIComponent(Flatted.stringify(RootPanel.project)),
+				'data:application/json;charset=utf-8,'+
+        encodeURIComponent(Flatted.stringify(RootPanel.project)),
 				`${RootPanel.project.name}.aiv`
 			)
 		});
@@ -151,7 +227,8 @@ class TitleBar extends View {
 		this.addView(this.exportButton);
 
     this.localeDropdown = new Dropdown('', (e) => {
-      window.location = '?locale=' + window.locales.find(x => x[0] == this.localeDropdown.getValue())[1];
+      window.location = '?locale=' + window.locales.find(x =>
+        x[0] == this.localeDropdown.getValue())[1];
     });
 
     for(let locale of window.locales) {
@@ -163,7 +240,22 @@ class TitleBar extends View {
   }
 }
 
+/**
+ * Class that opens an AIProject from a URL or a blob.
+ *
+ * @since  1.0.0
+ * @access public
+ */
 class Opener {
+  /**
+   * Opens an AIProject from a file.
+   *
+   * @since 1.0.0
+   * @access public
+   *
+   * @param {String} fileDir The directory of the file.
+   * @param {Blob} file The file that is to be opened.
+   */
   static async openFile(fileDir, file) {
     fileDir = fileDir.split('.');
     let fileType = fileDir.pop();
@@ -174,13 +266,23 @@ class Opener {
     } else if(fileType == 'aia') {
       project = await AIAReader.read(file);
     } else {
-      new Dialog(`Unknown project type .${fileType}`, 'Project files should end with .aia or .aiv').open();
+      new Dialog(
+        `Unknown project type .${fileType}`,
+        'Project files should end with .aia or .aiv').open();
       return;
     }
     project.name = fileName;
     RootPanel.openProject(project);
   }
 
+  /**
+   * Opens an AIProject from a url.
+   *
+   * @since 1.0.0
+   * @access public
+   *
+   * @param {String} url The URL that points to the file.
+   */
   static async openURL(url) {
     let fileType = url.split('.').pop();
     let fileName = url.split('.')[0].split('\\').pop();
@@ -191,7 +293,9 @@ class Opener {
     } else if(fileType == 'aiv') {
       project = await this.openAiv(url);
     } else {
-      new Dialog(`Unknown project type .${fileType}`, 'Project files should end with .aia or .aiv').open();
+      new Dialog(
+        `Unknown project type .${fileType}`,
+        'Project files should end with .aia or .aiv').open();
       return;
     }
 
