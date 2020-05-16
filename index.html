@@ -21,30 +21,32 @@
     import { Screen } from './views/screen.js';
 		import { URLHandler, ScriptLoader } from './views/widgets.js'
 
-    ScriptLoader.loadScript(fetchDir('lib/zip/zip.js'));
-    ScriptLoader.loadScript(fetchDir('lib/zip/zip-ext.js'));
-    ScriptLoader.loadScript(fetchDir('lib/flatted/flatted.min.js'));
+    ScriptLoader.loadScript(fetchDir('lib/zip/zip.js'), () => {
+      ScriptLoader.loadScript(fetchDir('lib/zip/zip-ext.js'), () => {
+        ScriptLoader.loadScript(fetchDir('lib/flatted/flatted.min.js'), () => {
+          ScriptLoader.loadScript(
+            fetchDir(`i18n/js/${URLHandler.getReqParams().locale || 'en'}.js`),
+            () => {
+              window.Messages = Messages;
+              window.locales = [['English', 'en'], ['German', 'de'], ['Spanish', 'es']];
+              window.locale = window.locales.find(x => x[1] == URLHandler.getReqParams().locale) || window.locales[0];
+              console.log(window.locale);
 
-    ScriptLoader.loadScript(
-      fetchDir(`i18n/js/${URLHandler.getReqParams().locale || 'en'}.js`),
-      () => {
-        window.Messages = Messages;
-        window.locales = [['English', 'en'], ['German', 'de'], ['Spanish', 'es']];
-        window.locale = window.locales.find(x => x[1] == URLHandler.getReqParams().locale) || window.locales[0];
-        console.log(window.locale);
+              ScriptLoader.loadScript(fetchDir('lib/blockly/blockly_compressed.js'),
+              () => {
+                ScriptLoader.loadScript(fetchDir('lib/blockly/blocks_compressed.js'));
+              });
 
-        ScriptLoader.loadScript(fetchDir('lib/blockly/blockly_compressed.js'),
-        () => {
-          ScriptLoader.loadScript(fetchDir('lib/blockly/blocks_compressed.js'));
+      	      zip.workerScriptsPath = fetchDir('lib/zip/');
+      	      window.RootPanel = new Screen();
+      	      RootPanel.setStyleName('root-panel');
+              RootPanel.handleURLData();
+      	      document.body.appendChild(RootPanel.domElement);
+
+              google.charts.load('current', {'packages':['corechart']});
+            });
         });
-
-	      zip.workerScriptsPath = fetchDir('lib/zip/');
-	      window.RootPanel = new Screen();
-	      RootPanel.setStyleName('root-panel');
-        RootPanel.handleURLData();
-	      document.body.appendChild(RootPanel.domElement);
-
-        google.charts.load('current', {'packages':['corechart']});
       });
+    });
   </script>
 </html>
