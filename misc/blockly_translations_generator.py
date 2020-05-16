@@ -161,7 +161,23 @@ map = [
 {name: 'pairs_', bname: 'LANG_LISTS_LOOKUP_IN_PAIRS_INPUT_PAIRS'},
 {name: 'key_', bname: 'LANG_LISTS_LOOKUP_IN_PAIRS_INPUT_KEY'},
 {name: 'ntFnd_', bname: 'LANG_LISTS_LOOKUP_IN_PAIRS_INPUT_NOT_FOUND'},
-{name: 'joiIts_', bname: 'LANG_LISTS_JOIN_WITH_SEPARATOR_INPUT'}
+{name: 'joiIts_', bname: 'LANG_LISTS_JOIN_WITH_SEPARATOR_INPUT'},
+{name: 'mkADct_', bname: 'LANG_DICTIONARIES_MAKE_DICTIONARY_TITLE'},
+{name: 'crEmptyDct_', bname: 'LANG_DICTIONARIES_CREATE_EMPTY_TITLE'},
+{name: 'pair_', bname: 'LANG_DICTIONARIES_PAIR_TITLE'},
+{name: 'value_', bname: 'LANG_CONTROLS_FOREACH_DICT_INPUT_VALUE'},
+{name: 'keys_', bname: 'LANG_DICTIONARIES_GET_KEYS_TITLE'},
+{name: 'values_', bname: 'LANG_DICTIONARIES_GET_VALUES_TITLE'},
+{name: 'isKInDct_', bname: 'LANG_DICTIONARIES_IS_KEY_IN_TITLE'},
+{name: 'dict_', bname: 'LANG_DICTIONARIES_GET_VALUES_INPUT'},
+{name: 'szOfDct_', bname: 'LANG_DICTIONARIES_LENGTH_TITLE'},
+{name: 'lstOPrsTDct_', bname: 'LANG_DICTIONARIES_ALIST_TO_DICT_TITLE'},
+{name: 'dctTLstOPrs_', bname: 'LANG_DICTIONARIES_DICT_TO_ALIST_TITLE'},
+{name: 'copyDct_', bname: 'LANG_DICTIONARIES_COPY_TITLE'},
+{name: 'mergeInto_', bname: 'LANG_DICTIONARIES_COMBINE_DICTS_TITLE'},
+{name: 'lstByWkngKPth_', bname: 'LANG_DICTIONARIES_WALK_TREE_TITLE'},
+{name: 'wlkAtAllLvl_', bname: 'LANG_DICTIONARIES_WALK_TREE_ALL_TITLE'},
+{name: 'isADct_', bname: 'LANG_DICTIONARIES_IS_DICT_TITLE'}
 ]
 
 trans_files = []
