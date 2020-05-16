@@ -189,6 +189,7 @@ class TitleBar extends View {
 
     this.logo = new Image('logo.png');
     this.logo.addStyleName('title-bar__logo');
+    this.logo.setSource('./../logo.png');
 
     this.title = new Label(Messages.pageTitle);
     this.title.addStyleName('title-bar__title');
