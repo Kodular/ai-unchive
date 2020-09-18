@@ -17,7 +17,7 @@ With Unchive, you can view your projects without having to log in to the Creator
  ```
  4. Once the package is installed successfully, run
  ```
- python setup.py
+ python setup.py serve
  ```
  5. Once set-up finishes, navigate to `localhost:8000` to access Unchive
 
