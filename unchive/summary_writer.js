@@ -90,6 +90,16 @@ export class SummaryWriter {
       'Number of extensions',
       project.extensions.length));
 
+    let totalBlockCount = 0;
+    for(let screen of project.screens) {
+      totalBlockCount += Array.from(new DOMParser()
+                          .parseFromString(screen.blocks, 'text/xml')
+                          .getElementsByTagName('block')).length;
+    }
+    html.addView(new SummaryItem(
+      'Total number of blocks',
+      totalBlockCount));
+
     let assetSize = 0;
     for(var asset of project.assets) {
       assetSize += asset.size;
