@@ -16,6 +16,7 @@
 
 import {View} from '../views/view.js'
 import simpleComponentsJson from "./simple_components.json";
+import propertyProcessor from "./property_processor.js?worker&url";
 
 /**
  * Class that describes an App Inventor project.
@@ -342,7 +343,7 @@ class Component {
       // loading large projects.
       // Instead, we use several web workers to do the job simultaneously in
       // separate threads and then return the complete array of properties.
-      var propertyLoader = new Worker('unchive/property_processor.js');
+      var propertyLoader = new Worker(propertyProcessor);
 	    try {
 	      propertyLoader.postMessage({
 	        'type' : this.name,
@@ -372,10 +373,10 @@ class Component {
 	      propertyLoader.terminate();
 	    }
 
-	    propertyLoader.addEventListener('message', (event) => {
+	    propertyLoader.onmessage = (event) => {
 	      resolve(event.data.properties);
 	      propertyLoader.terminate();
-	    });
+	    };
 		});
 
   }

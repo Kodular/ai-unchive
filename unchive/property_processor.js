@@ -9,23 +9,24 @@
  * @license
  */
 
-this.addEventListener('message', function(e) {
-  var propertyJSON = e.data.propertyJSON;
-  var descriptorJSON = e.data.descriptorJSON;
+onmessage = e => {
+  const propertyJSON = e.data.propertyJSON;
+  const descriptorJSON = e.data.descriptorJSON;
 
-  var properties = [];
-  for(let property of descriptorJSON) {
-    if(propertyJSON.hasOwnProperty(property.name))
+  const properties = [];
+  for (let property of descriptorJSON) {
+    if (propertyJSON.hasOwnProperty(property.name)) {
       properties.push({
-        'name' : property.name,
-        'value' : propertyJSON[property.name]
+        'name': property.name,
+        'value': propertyJSON[property.name]
       });
-    else
+    } else {
       properties.push({
-        'name' : property.name,
-        'value' : property.defaultValue,
-				'editorType' : property.editorType
+        'name': property.name,
+        'value': property.defaultValue,
+        'editorType': property.editorType
       });
+    }
   }
-  this.postMessage({'properties' : properties});
-}, false);
+  postMessage({'properties': properties});
+}
