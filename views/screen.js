@@ -7,17 +7,16 @@
  * @license
  */
 
-import { View } from './view.js'
-import { Image, Label, Button, Dropdown, DropdownItem,
-  Dialog, Downloader, URLHandler } from './widgets.js'
+import {View} from './view.js'
+import {Button, Dialog, Downloader, Dropdown, DropdownItem, Image, Label, URLHandler} from './widgets.js'
 
-import { ScreenNode, AdditionalListNode,
-  ExtensionNode, AssetNode } from './nodes/node.js'
-import { NodeList } from './nodes/node_list.js'
+import {AdditionalListNode, AssetNode, ExtensionNode, ScreenNode} from './nodes/node.js'
+import {NodeList} from './nodes/node_list.js'
 
-import { AIAReader, DescriptorGenerator } from '../unchive/aia_reader.js'
-import { AIProject } from '../unchive/ai_project.js'
-import { SummaryWriter } from '../unchive/summary_writer.js'
+import {AIAReader} from '../unchive/aia_reader.js'
+import {AIProject} from '../unchive/ai_project.js'
+import {SummaryWriter} from '../unchive/summary_writer.js'
+import simpleComponentsJson from "../unchive/simple_components.json";
 
 /**
  * Class that represents the root panel of the page.
@@ -83,7 +82,7 @@ export class Screen extends View {
    */
   async openProject(project) {
     if(AIProject.descriptorJSON == undefined) {
-      AIProject.descriptorJSON = await DescriptorGenerator.generate();
+      AIProject.descriptorJSON = simpleComponentsJson;
     }
 		console.log(project);
 		this.project = project;

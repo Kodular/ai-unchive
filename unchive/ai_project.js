@@ -14,8 +14,8 @@
  * @license
  */
 
-import { DescriptorGenerator } from './aia_reader.js'
-import { View } from '../views/view.js'
+import {View} from '../views/view.js'
+import simpleComponentsJson from "./simple_components.json";
 
 /**
  * Class that describes an App Inventor project.
@@ -47,7 +47,7 @@ export class AIProject {
     /**
      * Array of Screen objects this project contains.
      * @since  1.0.0
-     * @type   {Array}
+     * @type   {Array<AIScreen>}
      */
     this.screens = [];
 
@@ -64,47 +64,7 @@ export class AIProject {
      * @type   {Array}
      */
     this.assets = [];
-  }
-
-  /**
-   * Adds an array of assets to this project's array of assets.
-   *
-   * @since 1.0.0
-   * @access public
-   *
-   * @param {Array} assets Array of AIAsset objects to be added.
-   */
-  addAssets(assets) {
-    for(let asset of assets)
-      this.addAsset(asset);
-  }
-
-  /**
-   * Adds an array of screens to this project's array of screens.
-   *
-   * @since 1.0.0
-   * @access public
-   *
-   * @param {Array} screens Array of AIScreen objects to be added.
-   */
-  addScreens(screens) {
-    for(let screen of screens)
-      this.addScreen(screen);
-  }
-
-  /**
-   * Adds an array of extensions to this project's array of extensions.
-   *
-   * @since 1.0.0
-   * @access public
-   *
-   * @param {Array} extensions Array of AIExtension objects to be added.
-   */
-  addExtensions(extensions) {
-    for(let extension of extensions)
-      this.addExtension(extension);
-  }
-
+}
   /**
    * Adds a single asset to this project's array of assets.
    *
@@ -181,8 +141,7 @@ export class AIScreen {
    *
    * @return {AIScreen} New AIScreen object.
    */
-  async init(scm, blk, name, project) {
-    this.addToProject(project);
+  async init(scm, blk, name) {
     this.form = await this.generateSchemeData(scm);
     this.generateBlocks(blk);
     this.name = name;
@@ -190,25 +149,6 @@ export class AIScreen {
       throw new TypeError('Screen name cannot be null!');
 		return this;
   }
-
-  /**
-   * Adds this screen to an existing App Inventor project.
-   *
-   * @since 1.0.0
-   * @access public
-   *
-   * @param {AIProject} project The project this screen is to be added to.
-   */
-  addToProject(project) {
-    if(project instanceof AIProject)
-      this.project = project;
-    else
-      throw new TypeError(
-        'Attempt to set ' +
-        typeof project +
-        'as project of AIScreen');
-  }
-
   /**
    * Takes the raw scheme input from the AIA, parses it as a JSON array, and then
    * generates all the component and property objects for this screen.
@@ -241,15 +181,14 @@ export class AIScreen {
    */
   async generateComponent(componentJSON) {
     // Check if the component is an instance of an extension.
-    var extType = this.project.extensions.find(x =>
-      x.name.split('.').pop() == componentJSON.$Type);
+    var extType = undefined //this.project.extensions.find(x => x.name.split('.').pop() === componentJSON.$Type);
     var origin;
 
     // If it is an extension, give it a custom descriptor JSON object that will
     // be used to generate its properties.
     // If it's not an extension, no JSON will be provided and the service's
     // simple_components.json file will be used instead.
-    if(extType != undefined) {
+    if(extType !== undefined) {
       var customDescriptorJSON = extType.descriptorJSON;
       origin = 'EXTENSION';
     } else {
@@ -394,8 +333,8 @@ class Component {
 		return new Promise(async (resolve, reject) => {
 
       // We need to load the simple_components.json file first.
-			if(AIProject.descriptorJSON == undefined) {
-	      AIProject.descriptorJSON = await DescriptorGenerator.generate();
+			if(AIProject.descriptorJSON === undefined) {
+	      AIProject.descriptorJSON = await simpleComponentsJson;
 	    }
 
       // It is not ideal to load the properties of all components in the UI thread
@@ -411,7 +350,7 @@ class Component {
 	        'descriptorJSON' : (
             customDescriptorJSON ||
             AIProject.descriptorJSON.find(x =>
-              x.type == 'com.google.appinventor.components.runtime.' + this.type)
+              x.type === 'com.google.appinventor.components.runtime.' + this.type)
             ).properties || []
 	      });
 	    } catch(error) {
@@ -569,7 +508,7 @@ export class AIAsset {
    * @return {String} Temporary URL pointing to this asset's blob.
    */
   getURL() {
-    if(this.url == '')
+    if(this.url === '')
       this.url = URL.createObjectURL(this.blob)
     return this.url;
   }
@@ -685,10 +624,10 @@ export class BlocklyWorkspace {
      */
 		this.workspace.getDescriptor = function(componentType) {
 			let descriptor =  AIProject.descriptorJSON.find(x =>
-        x.type == 'com.google.appinventor.components.runtime.' + componentType);
-			if(descriptor == undefined)
+        x.type === 'com.google.appinventor.components.runtime.' + componentType);
+			if(descriptor === undefined)
 				for(let extension of RootPanel.project.extensions)
-					if(extension.name.split('.').pop() == componentType)
+					if(extension.name.split('.').pop() === componentType)
 						return extension.descriptorJSON;
 			return descriptor;
 		}
@@ -711,7 +650,7 @@ export class BlocklyWorkspace {
     } finally {
       // If the top-level block is not an event, procedure def, or global declaration,
       // we flag it as faulty to show the user a visual indicator in the UI.
-      if(this.validTypes.indexOf(this.blocks.getAttribute('type')) == -1)
+      if(this.validTypes.indexOf(this.blocks.getAttribute('type')) === -1)
         this.faulty = true;
     }
 	}
