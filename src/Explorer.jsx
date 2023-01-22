@@ -11,6 +11,7 @@ import {
   Loader,
   ScrollArea,
   Select,
+  SimpleGrid,
   Stack,
   Table,
   Tabs,
@@ -75,29 +76,13 @@ function Explorer({file}) {
 
 function Overview({project}) {
   return (
-    <Grid>
-      <Grid.Col span={6}>
-        <Stack>
-          <p>Project Name: {project.name}</p>
-          <p>Number of screens: {project.screens.length}</p>
-          <p>Number of extensions: {project.extensions.length}</p>
-          <p>Number of assets: {project.assets.length}</p>
-          <p>Total size of assets: {prettyBytes(project.assets.reduce((s, a) => s + a.size, 0))}</p>
-        </Stack>
-      </Grid.Col>
-      <Grid.Col span={6}>
-        <ScrollArea offsetScrollbars style={{height: "calc(100vh - 120px)"}}>
-          <Stack>
-            {
-              project.properties.map((property, i) => (
-                <TextInput key={i} label={property.name} value={property.value} disabled/>
-              ))
-            }
-          </Stack>
-        </ScrollArea>
-      </Grid.Col>
-    </Grid>
-
+    <SimpleGrid cols={4} style={{padding: '8px 16px'}}>
+      {
+        project.properties.map((property, i) => (
+          <TextInput key={i} label={property.name} value={property.value} disabled/>
+        ))
+      }
+    </SimpleGrid>
   )
 }
 
@@ -115,16 +100,29 @@ function Assets({assets}) {
     <tr key={asset.name}>
       <td>{asset.name}</td>
       <td>{asset.type}</td>
-      <td>{prettyBytes(asset.size)}</td>
+      <td align="right">{prettyBytes(asset.size)}</td>
       <td><Anchor href={asset.getURL()} target="_blank">Download</Anchor></td>
     </tr>
   ));
 
   return (
-    <ScrollArea offsetScrollbars style={{height: "calc(100vh - 85px)"}}>
-      <Table highlightOnHover>
+    <ScrollArea offsetScrollbars style={{height: "calc(100vh - 100px)"}}>
+      <Table highlightOnHover horizontalSpacing="xl">
         <thead>{ths}</thead>
         <tbody>{rows}</tbody>
+        <tfoot>
+        <tr>
+          <td></td>
+          <td></td>
+          <td align="right">
+            <Divider/>
+            <p>
+              &sum; = {prettyBytes(assets.map(it => it.size).reduce((a, v) => a + v, 0))}
+            </p>
+          </td>
+          <td></td>
+        </tr>
+        </tfoot>
       </Table>
     </ScrollArea>
   )
@@ -153,7 +151,7 @@ function Extensions({exts}) {
 
   return (
     <ScrollArea offsetScrollbars style={{height: "calc(100vh - 95px)"}}>
-      <Table highlightOnHover>
+      <Table highlightOnHover horizontalSpacing="xl">
         <thead>{ths}</thead>
         <tbody>{rows}</tbody>
       </Table>

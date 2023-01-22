@@ -68,14 +68,12 @@ export class AIAReader {
   static async readProjectProperties(file) {
     const content = await this.getFileContent(file);
     // parse the properties file
-    const properties = content.split('\n')
+    return content.split('\n')
       .filter(line => line.trim() && !line.startsWith('#'))
       .map(line => {
         const [k, v] = line.split('=', 2)
         return {name: k, value: v}
       })
-    console.log(properties)
-    return properties
   }
 
   /**
