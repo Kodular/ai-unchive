@@ -36,40 +36,46 @@ export class AIAReader {
 
     // The simple_components.json file is fetched before anything is read.
     AIProject.descriptorJSON = simpleComponentsJson;
-    var project = new AIProject("somename");
-    var readerObj = content instanceof Blob ?
-      new BlobReader(content) :
-      new HttpReader(content);
-
+    const readerObj = content instanceof Blob ? new BlobReader(content) : new HttpReader(content);
     const zr = new ZipReader(readerObj)
+
     const entries = await zr.getEntries()
+
+    const projectProperties = await this.readProjectProperties(entries.find(x => x.filename === 'youngandroidproject/project.properties'))
+
+    const project = new AIProject(projectProperties.find(x => x.name === 'name').value ?? 'Unnamed Project');
+    project.properties = projectProperties;
 
     // Extensions are loaded first so that instances of extensions can
     // later fetch the correct descriptor JSON files.
-    for (let extension of await this.generateExtensions(
-      entries.filter(x => this.getFileType(x) === 'json')
-    )) {
+    for (let extension of await this.generateExtensions(entries.filter(x => this.getFileType(x) === 'json'))) {
       project.addExtension(extension);
     }
 
     // Screens are loaded asynchronously.
-    for (let screen of await this.generateScreens(
-      entries.filter(x =>
-        this.getFileType(x) === 'scm' ||
-        this.getFileType(x) === 'bky'))) {
+    for (let screen of await this.generateScreens(entries.filter(x => this.getFileType(x) === 'scm' || this.getFileType(x) === 'bky'))) {
       project.addScreen(screen);
     }
 
     // Finally, all the assets are loaded.
-    for (let asset of await this.generateAssets(
-      entries.filter(x =>
-        x.filename.split('/')[0] === 'assets' &&
-        x.filename.split('/')[2] === undefined)
-    )) {
+    for (let asset of await this.generateAssets(entries.filter(x => x.filename.split('/')[0] === 'assets' && x.filename.split('/')[2] === undefined))) {
       project.addAsset(asset);
     }
 
     return project
+  }
+
+  static async readProjectProperties(file) {
+    const content = await this.getFileContent(file);
+    // parse the properties file
+    const properties = content.split('\n')
+      .filter(line => line.trim() && !line.startsWith('#'))
+      .map(line => {
+        const [k, v] = line.split('=', 2)
+        return {name: k, value: v}
+      })
+    console.log(properties)
+    return properties
   }
 
   /**
@@ -84,24 +90,22 @@ export class AIAReader {
    *
    */
   static async generateScreens(files) {
-    var schemes = [];
-    var blocks = [];
+    const schemes = [];
+    const blocks = [];
 
-    var screens = [];
+    const screens = [];
 
     // First, we load all the scheme files into the schemes array and the Blockly
     // files into the blocks array.
     for (let file of files) {
-      var content = await this.getFileContent(file);
+      const content = await this.getFileContent(file);
       if (this.getFileType(file) === 'scm') {
         schemes.push({
-          'name': this.getFileName(file),
-          'scm': content
+          'name': this.getFileName(file), 'scm': content
         });
       } else if (this.getFileType(file) === 'bky') {
         blocks.push({
-          'name': this.getFileName(file),
-          'bky': content
+          'name': this.getFileName(file), 'bky': content
         });
       }
     }
@@ -110,11 +114,7 @@ export class AIAReader {
     // the corresponding Blockly file.
     for (let scheme of schemes) {
       let aiScreen = new AIScreen();
-      screens.push(aiScreen.init(
-        scheme.scm,
-        blocks.find(x => x.name === scheme.name).bky,
-        scheme.name
-      ));
+      screens.push(aiScreen.init(scheme.scm, blocks.find(x => x.name === scheme.name).bky, scheme.name));
     }
 
     return Promise.all(screens)
@@ -132,29 +132,23 @@ export class AIAReader {
    * @return {Promise<Array>} An array of AIExtension objects for the project being read.
    */
   static async generateExtensions(files) {
-    var buildInfos = [];
-    var descriptors = [];
-    var extensions = [];
+    const buildInfos = [];
+    const descriptors = [];
+    const extensions = [];
 
     // The component_build_info and component descriptor files are being read.
     // Some extensions describe the component as a JSON array, while some as a
     // JSON object. We collect both files at the same time and handle them
     // separately later.
     for (let file of files) {
-      var content = await this.getFileContent(file);
-      if (this.getFileName(file) ===
-        'component_build_infos' ||
-        this.getFileName(file) === 'component_build_info') {
+      const content = await this.getFileContent(file);
+      if (this.getFileName(file) === 'component_build_infos' || this.getFileName(file) === 'component_build_info') {
         buildInfos.push({
-          'name': file.filename.split('/')[2],
-          'info': JSON.parse(content)
+          'name': file.filename.split('/')[2], 'info': JSON.parse(content)
         });
-      } else if (this.getFileName(file) ===
-        'components' ||
-        this.getFileName(file) === 'component') {
+      } else if (this.getFileName(file) === 'components' || this.getFileName(file) === 'component') {
         descriptors.push({
-          'name': file.filename.split('/')[2],
-          'descriptor': JSON.parse(content)
+          'name': file.filename.split('/')[2], 'descriptor': JSON.parse(content)
         });
       }
     }
@@ -168,17 +162,10 @@ export class AIAReader {
     for (let buildInfo of buildInfos) {
       if (Array.isArray(buildInfo.info)) {
         for (let ext of buildInfo.info) {
-          extensions.push(new AIExtension(
-            ext.type,
-            descriptors.find(x => x.name === buildInfo.name)
-              .descriptor[buildInfo.info.indexOf(ext)]
-          ));
+          extensions.push(new AIExtension(ext.type, descriptors.find(x => x.name === buildInfo.name).descriptor[buildInfo.info.indexOf(ext)]));
         }
       } else {
-        extensions.push(new AIExtension(
-          buildInfo.info.type,
-          descriptors.find(x => x.name === buildInfo.name).descriptor
-        ));
+        extensions.push(new AIExtension(buildInfo.info.type, descriptors.find(x => x.name === buildInfo.name).descriptor));
       }
     }
 
@@ -197,14 +184,10 @@ export class AIAReader {
    * @return {Promise<Array>} An array of AIAsset objects for the project being read.
    */
   static async generateAssets(files) {
-    var assets = [];
+    const assets = [];
     for (let file of files) {
-      var content = await this.getFileContent(file, new BlobWriter());
-      assets.push(new AIAsset(
-        this.getFileName(file),
-        this.getFileType(file),
-        content
-      ));
+      const content = await this.getFileContent(file, new BlobWriter());
+      assets.push(new AIAsset(this.getFileName(file), this.getFileType(file), content));
     }
     return assets;
   }
@@ -232,7 +215,7 @@ export class AIAReader {
    * @access private
    *
    * @class
-   * @param {Entry} file The name of the file whose extension is to be returned.
+   * @param file The name of the file whose extension is to be returned.
    *
    * @return {String} The file's extension.
    */
@@ -247,7 +230,7 @@ export class AIAReader {
    * @access private
    *
    * @class
-   * @param {Entry} file The full name of the file whose name is to be returned.
+   * @param file The full name of the file whose name is to be returned.
    *
    * @return {String} The file's name.
    */

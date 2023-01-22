@@ -13,7 +13,7 @@ import { Label, Downloader, AssetFormatter } from '../widgets.js'
 
 import { NodeList } from './node_list.js'
 
-import { BlocklyWorkspace } from '../../unchive/ai_project.js'
+import { BlocklyWorkspace } from '../../src/unchive/ai_project.js'
 
 /**
  * Class that represents a basic node.

@@ -11,7 +11,7 @@ import {
   Center,
   Anchor
 } from '@mantine/core'
-import {Explorer} from './components'
+import {Explorer} from './Explorer.jsx'
 import React, {useState} from "react";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {useColorScheme} from "@mantine/hooks";

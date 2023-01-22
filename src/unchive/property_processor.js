@@ -9,9 +9,9 @@
  * @license
  */
 
-onmessage = e => {
-  const propertyJSON = e.data.propertyJSON;
-  const descriptorJSON = e.data.descriptorJSON;
+export const process_properties = e => {
+  const propertyJSON = e.propertyJSON;
+  const descriptorJSON = e.descriptorJSON;
 
   const properties = [];
   for (let property of descriptorJSON) {
@@ -28,5 +28,5 @@ onmessage = e => {
       });
     }
   }
-  postMessage({'properties': properties});
+  return({'properties': properties});
 }

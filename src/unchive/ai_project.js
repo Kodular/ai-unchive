@@ -14,9 +14,9 @@
  * @license
  */
 
-import {View} from '../views/view.js'
+import {View} from '../../views/view.js'
 import simpleComponentsJson from "./simple_components.json";
-import propertyProcessor from "./property_processor.js?worker&url";
+import { process_properties } from "./property_processor.js";
 
 /**
  * Class that describes an App Inventor project.
@@ -44,6 +44,8 @@ export class AIProject {
      * @type   {String}
      */
     this.name = name;
+
+    this.properties = [];
 
     /**
      * Array of Screen objects this project contains.
@@ -343,9 +345,8 @@ class Component {
       // loading large projects.
       // Instead, we use several web workers to do the job simultaneously in
       // separate threads and then return the complete array of properties.
-      var propertyLoader = new Worker(propertyProcessor);
 	    try {
-	      propertyLoader.postMessage({
+	      const props = process_properties({
 	        'type' : this.name,
 	        'propertyJSON' : properties,
 	        'descriptorJSON' : (
@@ -354,6 +355,7 @@ class Component {
               x.type === 'com.google.appinventor.components.runtime.' + this.type)
             ).properties || []
 	      });
+        resolve(props.properties)
 	    } catch(error) {
         // If the descriptor JSON object for this component does not exist in
         // AIProject.descriptorJSON, it means either the component has been
@@ -363,20 +365,10 @@ class Component {
         // can be parsed, and add a "faulty" flag to the component.
         // This flag will later be used in @see node.js::ComponentNode to show the
         // user a visual indicator stating there was an error parsing the component.
-	      console.log(
-          'Error in ' +
-          this.name +
-          '(' + this.uid + ' / ' + this.type + '), message: ' +
-          error.message);
+	      console.log(`Error in ${this.name}(${this.uid} / ${this.type}), message: ${error.message}`);
 				this.faulty = true;
 				resolve([]);
-	      propertyLoader.terminate();
 	    }
-
-	    propertyLoader.onmessage = (event) => {
-	      resolve(event.data.properties);
-	      propertyLoader.terminate();
-	    };
 		});
 
   }

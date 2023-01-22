@@ -1,8 +1,27 @@
-import {Grid, List, Loader, ScrollArea, Stack, Tabs, TextInput, Anchor, Table, Center, Indicator} from '@mantine/core';
+import {
+  Anchor,
+  Badge,
+  Center,
+  ColorInput,
+  Divider,
+  Grid,
+  Group,
+  Indicator,
+  List,
+  Loader,
+  ScrollArea,
+  Select,
+  Stack,
+  Table,
+  Tabs,
+  TextInput
+} from '@mantine/core';
 import React, {useState} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {AIAReader} from "../unchive/aia_reader.js";
+import {AIAReader} from "./unchive/aia_reader.js";
 import prettyBytes from "pretty-bytes";
+import {IconDeviceMobile, IconIcons, IconPuzzle} from "@tabler/icons";
+import {convertAiColor} from "./utils.js";
 
 function Explorer({file}) {
 
@@ -21,16 +40,16 @@ function Explorer({file}) {
   return (
     <Tabs defaultValue="overview">
       <Tabs.List>
-        <Tabs.Tab value="overview">Project Overview - {project.name}</Tabs.Tab>
+        <Tabs.Tab value="overview"><b>{project.name}</b></Tabs.Tab>
         <Indicator label={project.assets.length} dot={false} overflowCount={999} inline size={22}>
-          <Tabs.Tab value="assets">Assets</Tabs.Tab>
+          <Tabs.Tab value="assets" icon={<IconIcons/>}>Assets</Tabs.Tab>
         </Indicator>
         <Indicator label={project.extensions.length} dot={false} overflowCount={999} inline size={22}>
-          <Tabs.Tab value="extensions">Extensions</Tabs.Tab>
+          <Tabs.Tab value="extensions" icon={<IconPuzzle/>}>Extensions</Tabs.Tab>
         </Indicator>
         {
           project.screens.map((screen) => (
-            <Tabs.Tab key={screen.name} value={screen.name}>{screen.name}</Tabs.Tab>
+            <Tabs.Tab key={screen.name} value={screen.name} icon={<IconDeviceMobile/>}>{screen.name}</Tabs.Tab>
           ))
         }
       </Tabs.List>
@@ -41,7 +60,7 @@ function Explorer({file}) {
         <Assets assets={project.assets}/>
       </Tabs.Panel>
       <Tabs.Panel value="extensions">
-        <Extensions assets={project.extensions}/>
+        <Extensions exts={project.extensions}/>
       </Tabs.Panel>
       {
         project.screens.map((screen) => (
@@ -56,13 +75,29 @@ function Explorer({file}) {
 
 function Overview({project}) {
   return (
-    <Stack>
-      <p>Project Name: {project.name}</p>
-      <p>Number of screens: {project.screens.length}</p>
-      <p>Number of extensions: {project.extensions.length}</p>
-      <p>Number of assets: {project.assets.length}</p>
-      <p>Total size of assets: {prettyBytes(project.assets.reduce((s, a)=>s+a.size,0))}</p>
-    </Stack>
+    <Grid>
+      <Grid.Col span={6}>
+        <Stack>
+          <p>Project Name: {project.name}</p>
+          <p>Number of screens: {project.screens.length}</p>
+          <p>Number of extensions: {project.extensions.length}</p>
+          <p>Number of assets: {project.assets.length}</p>
+          <p>Total size of assets: {prettyBytes(project.assets.reduce((s, a) => s + a.size, 0))}</p>
+        </Stack>
+      </Grid.Col>
+      <Grid.Col span={6}>
+        <ScrollArea offsetScrollbars style={{height: "calc(100vh - 120px)"}}>
+          <Stack>
+            {
+              project.properties.map((property, i) => (
+                <TextInput key={i} label={property.name} value={property.value} disabled/>
+              ))
+            }
+          </Stack>
+        </ScrollArea>
+      </Grid.Col>
+    </Grid>
+
   )
 }
 
@@ -95,7 +130,7 @@ function Assets({assets}) {
   )
 }
 
-function Extensions({assets: exts}) {
+function Extensions({exts}) {
   const ths = (
     <tr>
       <th>Type</th>
@@ -132,7 +167,7 @@ function Screen({screen}) {
     <Grid>
       <Grid.Col span={3}><LayoutPanel form={screen.form} selected={selected} setSelected={setSelected}/></Grid.Col>
       <Grid.Col span={3}><PropertiesPanel component={selected}/></Grid.Col>
-      {/*<Grid.Col span={6}><BlocksPanel/></Grid.Col>*/}
+      <Grid.Col span={6}><BlocksPanel/></Grid.Col>
     </Grid>
   )
 }
@@ -140,8 +175,21 @@ function Screen({screen}) {
 function LayoutPanel({form, selected, setSelected}) {
   return (
     <div>
-      <div>Layout</div>
-      <ScrollArea offsetScrollbars style={{height: "calc(100vh - 120px)"}}>
+      <Group position="apart" style={{padding: '6px 4px'}}>
+        <div>Layout</div>
+        <Select
+          size="xs"
+          placeholder="Component Type"
+          defaultValue="all"
+          data={[
+            {value: 'all', label: 'All'},
+            {value: 'visible', label: 'Visible'},
+            {value: 'non_visible', label: 'Non-Visible'},
+          ]}
+        />
+      </Group>
+      <Divider/>
+      <ScrollArea offsetScrollbars style={{height: "calc(100vh - 150px)"}}>
         <List listStyleType="none" withPadding>
           <TreeNode component={form} selected={selected} setSelected={setSelected}/>
         </List>
@@ -161,9 +209,8 @@ function TreeNode({component, selected, setSelected}) {
     <List.Item onClick={onSelect}>
       <Stack spacing={0} style={{backgroundColor: component === selected && "#4dabf733"}}>
         {component.name}
-        <small>{component.type}</small>
       </Stack>
-      <List listStyleType="none" withPadding style={{borderLeft: "2px solid #ddd9"}}>
+      <List listStyleType="none" withPadding style={{borderLeft: "1px solid #ddd8"}}>
         {
           component.children?.map((child, i) => (
             <TreeNode component={child} key={i} selected={selected} setSelected={setSelected}/>
@@ -177,17 +224,31 @@ function TreeNode({component, selected, setSelected}) {
 function PropertiesPanel({component}) {
   return (
     <div>
-      <div>{component.name} ({component.type}) Properties</div>
-      <ScrollArea offsetScrollbars style={{height: "calc(100vh - 120px)"}}>
+      <Group position="apart" style={{padding: '8px 4px'}}>
+        <div><b>{component.name}</b> Properties</div>
+        <Badge>{component.type}</Badge>
+      </Group>
+      <Divider/>
+      <ScrollArea offsetScrollbars style={{height: "calc(100vh - 150px)"}}>
         <Stack>
           {
             component.properties.map((property, i) => (
-              <TextInput key={i} label={property.name} value={property.value} disabled/>
+              property.editorType ?
+                property.editorType === 'color' ?
+                  <ColorInput key={i} label={property.name} value={convertAiColor(property.value)} disabled/>
+                  : <TextInput key={i} label={property.name} value={property.value} disabled/>
+                : <TextInput key={i} label={property.name} value={property.value} disabled/>
             ))
           }
         </Stack>
       </ScrollArea>
     </div>
+  )
+}
+
+function BlocksPanel() {
+  return (
+    <div>hello</div>
   )
 }
 

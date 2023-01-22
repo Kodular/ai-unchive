@@ -13,10 +13,10 @@ import {Button, Dialog, Downloader, Dropdown, DropdownItem, Image, Label, URLHan
 import {AdditionalListNode, AssetNode, ExtensionNode, ScreenNode} from './nodes/node.js'
 import {NodeList} from './nodes/node_list.js'
 
-import {AIAReader} from '../unchive/aia_reader.js'
-import {AIProject} from '../unchive/ai_project.js'
-import {SummaryWriter} from '../unchive/summary_writer.js'
-import simpleComponentsJson from "../unchive/simple_components.json";
+import {AIAReader} from '../src/unchive/aia_reader.js'
+import {AIProject} from '../src/unchive/ai_project.js'
+import {SummaryWriter} from '../src/unchive/summary_writer.js'
+import simpleComponentsJson from "../src/unchive/simple_components.json";
 
 /**
  * Class that represents the root panel of the page.
