@@ -1,15 +1,15 @@
 import {
+  Anchor,
   AppShell,
   Avatar,
   Button,
+  Center,
   FileButton,
   Group,
   Header,
   MantineProvider,
   Select,
-  Text,
-  Center,
-  Anchor
+  Text
 } from '@mantine/core'
 import {Explorer} from './Explorer.jsx'
 import React, {useState} from "react";
@@ -63,8 +63,17 @@ function TitleBar() {
       <Group sx={{height: '100%'}} px={20} position="apart">
         <Group>
           <Avatar src="logo.png" alt="logo"/>
-          <Anchor href="/">
-            <Text size="xl"><b>Unchive</b> by Kodular</Text>
+          <Anchor href="/" underline={false}>
+            <Text
+              span
+              size="xl"
+              fw={700}
+              variant="gradient"
+              gradient={{from: 'pink', to: 'yellow'}}
+            >
+              Unchive
+            </Text>
+            <Text span size='lg' fw={700}> by Kodular</Text>
           </Anchor>
         </Group>
         <Select
