@@ -1,5 +1,6 @@
 import {
   Anchor,
+  Avatar,
   Badge,
   Center,
   ColorInput,
@@ -17,12 +18,16 @@ import {
   Tabs,
   TextInput
 } from '@mantine/core';
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {AIAReader} from "./unchive/aia_reader.js";
 import prettyBytes from "pretty-bytes";
 import {IconDeviceMobile, IconIcons, IconPuzzle} from "@tabler/icons";
 import {convertAiColor} from "./utils.js";
+import BlocklyComponent from "./components/Blockly/index.js";
+import {Cell, LabelList, Legend, Pie, PieChart, ResponsiveContainer} from "recharts";
+
+const COLORS = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#5e35b1'];
 
 function Explorer({file}) {
 
@@ -74,15 +79,64 @@ function Explorer({file}) {
   )
 }
 
-function Overview({project}) {
+function RenderPieChart({data}) {
+  const sortedData = data.sort((a, b) => b.value - a.value)
   return (
-    <SimpleGrid cols={4} style={{padding: '8px 16px'}}>
-      {
-        project.properties.map((property, i) => (
-          <TextInput key={i} label={property.name} value={property.value} disabled/>
-        ))
-      }
-    </SimpleGrid>
+    <ResponsiveContainer height={300} width="100%">
+      <PieChart>
+        <Pie data={sortedData} dataKey="value" cx="50%" cy="50%" outerRadius={100} innerRadius={50}>
+          {sortedData.map((_, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
+          ))}
+          <LabelList dataKey="value" position="inside" formatter={f => (f * 100).toFixed(1) + '%'}/>
+        </Pie>
+        <Legend layout="vertical" align="right" verticalAlign="top" iconType="circle"/>
+      </PieChart>
+    </ResponsiveContainer>
+  );
+}
+
+function Overview({project}) {
+  const totalBlocks = project.screens.reduce((a, s) => a + (s.blocks?.match(/<block/g) || []).length, 0)
+  const blocksPerScreen = project.screens.map(s => ({
+    name: s.name,
+    value: (s.blocks?.match(/<block/g) || []).length / totalBlocks
+  }))
+
+  const totalAssets = project.assets.length
+  const assetsPerType = Object.entries(project.assets.reduce((a, s) => {
+    if (a[s.type]) {
+      a[s.type]++
+    } else {
+      a[s.type] = 1
+    }
+    return a
+  }, {})).map(([k, v]) => ({
+    name: k,
+    value: v / totalAssets
+  }))
+
+  return (
+    <Grid>
+      <Grid.Col span={3}>
+        <Avatar radius="md" size="xl" color="dark" src="/logo.png"/>
+      </Grid.Col>
+      <Grid.Col span={3}>
+        <ScrollArea offsetScrollbars style={{height: "calc(100vh - 100px)"}}>
+          {
+            project.properties.map((property, i) => (
+              <TextInput key={i} label={property.name} value={property.value} disabled/>
+            ))
+          }
+        </ScrollArea>
+      </Grid.Col>
+      <Grid.Col span={6}>
+        <ScrollArea offsetScrollbars style={{height: "calc(100vh - 100px)"}}>
+          <RenderPieChart data={blocksPerScreen}/>
+          <RenderPieChart data={assetsPerType}/>
+        </ScrollArea>
+      </Grid.Col>
+    </Grid>
   )
 }
 
@@ -165,7 +219,7 @@ function Screen({screen}) {
     <Grid>
       <Grid.Col span={3}><LayoutPanel form={screen.form} selected={selected} setSelected={setSelected}/></Grid.Col>
       <Grid.Col span={3}><PropertiesPanel component={selected}/></Grid.Col>
-      <Grid.Col span={6}><BlocksPanel/></Grid.Col>
+      <Grid.Col span={6}><BlocksPanel blocks={screen.blocks}/></Grid.Col>
     </Grid>
   )
 }
@@ -244,9 +298,16 @@ function PropertiesPanel({component}) {
   )
 }
 
-function BlocksPanel() {
+function BlocksPanel({blocks}) {
   return (
     <div>hello</div>
+    // <BlocklyComponent
+    //   initialXml={blocks}
+    //   readOnly={true}
+    //   trashcan={false}
+    //   toolbox={false}
+    //   scrollbars={false}
+    // />
   )
 }
 
