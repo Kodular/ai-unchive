@@ -22,7 +22,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {AIAReader} from "./unchive/aia_reader.js";
 import prettyBytes from "pretty-bytes";
-import {IconDeviceMobile, IconIcons, IconPuzzle} from "@tabler/icons";
+import {IconDeviceMobile, IconIcons, IconPuzzle} from "@tabler/icons-react";
 import {convertAiColor} from "./utils.js";
 import BlocklyComponent from "./components/Blockly/index.js";
 import {Cell, LabelList, Legend, Pie, PieChart, ResponsiveContainer} from "recharts";
@@ -47,10 +47,10 @@ function Explorer({file}) {
     <Tabs defaultValue="overview">
       <Tabs.List>
         <Tabs.Tab value="overview"><b>{project.name}</b></Tabs.Tab>
-        <Indicator label={project.assets.length} dot={false} overflowCount={999} inline size={22}>
+        <Indicator label={project.assets.length} inline size={16}>
           <Tabs.Tab value="assets" icon={<IconIcons/>}>Assets</Tabs.Tab>
         </Indicator>
-        <Indicator label={project.extensions.length} dot={false} overflowCount={999} inline size={22}>
+        <Indicator label={project.extensions.length} inline size={16}>
           <Tabs.Tab value="extensions" icon={<IconPuzzle/>}>Extensions</Tabs.Tab>
         </Indicator>
         {
