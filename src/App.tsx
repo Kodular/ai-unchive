@@ -20,7 +20,6 @@ const queryClient = new QueryClient()
 
 function App() {
     const colorScheme = useColorScheme();
-    const [file, setFile] = useState<File | null>(null);
 
     return (
         <MantineProvider withGlobalStyles withNormalizeCSS
@@ -39,20 +38,7 @@ function App() {
                         },
                     })}
                 >
-                    {
-                        file ?
-                            (
-                                <Explorer file={file}/>
-                            )
-                            :
-                            (
-                                <Center style={{height: "100%"}}>
-                                    <FileButton onChange={setFile} accept=".aia,.aix">
-                                        {(props) => <Button {...props}>Select aia or aix file</Button>}
-                                    </FileButton>
-                                </Center>
-                            )
-                    }
+                    <Content/>
                 </AppShell>
             </QueryClientProvider>
         </MantineProvider>
@@ -61,23 +47,25 @@ function App() {
 
 function TitleBar() {
     return (
-        <Header height={50} p="xs">
+        <Header height={50}>
             <Group sx={{height: '100%'}} px={20} position="apart">
-                <Group>
-                    <Avatar src="logo.png" alt="logo"/>
-                    <Anchor href="/" underline={false}>
-                        <Text
-                            span
-                            size="xl"
-                            fw={700}
-                            variant="gradient"
-                            gradient={{from: 'pink', to: 'yellow'}}
-                        >
-                            Unchive
-                        </Text>
-                        <Text span size='lg' fw={700}> by Kodular</Text>
-                    </Anchor>
-                </Group>
+                <Anchor href="/" underline={false}>
+                    <Group>
+                        <Avatar src="logo.png" alt="logo"/>
+                        <span>
+                            <Text
+                                span
+                                size="xl"
+                                fw={700}
+                                variant="gradient"
+                                gradient={{from: 'pink', to: 'yellow'}}
+                            >
+                                Unchive
+                            </Text>
+                            <Text span> by Kodular</Text>
+                        </span>
+                    </Group>
+                </Anchor>
                 <Select
                     size="xs"
                     placeholder="Language"
@@ -90,6 +78,22 @@ function TitleBar() {
                 />
             </Group>
         </Header>
+    )
+}
+
+function Content() {
+    const [file, setFile] = useState<File | null>(null);
+
+    if (file) {
+        return <Explorer file={file}/>
+    }
+
+    return (
+        <Center style={{height: "100%"}}>
+            <FileButton onChange={setFile} accept=".aia,.aix">
+                {(props) => <Button {...props}>Select aia or aix file</Button>}
+            </FileButton>
+        </Center>
     )
 }
 
