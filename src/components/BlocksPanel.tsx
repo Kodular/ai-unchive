@@ -1,29 +1,21 @@
-import BlocklyComponent from "./Blockly";
-import React from "react";
+import React, {useMemo} from "react";
+import {ScrollArea} from "@mantine/core";
+import BlocklyComponent from "./BlocklyComponent";
 
-export function BlocksPanel({blocks}: { blocks: string }) {
+export function BlocksPanel({blocksXml}: { blocksXml: string }) {
+    const blocks = useMemo(() => {
+        const blocksDom = new DOMParser().parseFromString(blocksXml, 'text/xml')
+        return Array.from(blocksDom.getElementsByTagName('xml')[0].children)
+            .filter(b => b.tagName === 'block')
+    }, [blocksXml])
+
     return (
-        <BlocklyComponent
-            initialXml={blocks}
-            readOnly={true}
-            trashcan={false}
-            toolbox={undefined}
-            scrollbars={true}
-            grid={{
-                spacing: 20,
-                length: 3,
-                colour: '#ccc',
-                snap: true
-            }}
-            zoom={{
-                controls: true,
-                // wheel: true,
-                startScale: 1.0,
-                maxScale: 3,
-                minScale: 0.3,
-                scaleSpeed: 1.2,
-                pinch: true
-            }}
-        />
+        <ScrollArea h="calc(100vh - 110px)">
+            {
+                blocks.map((block, i) => (
+                    <BlocklyComponent key={i} blocksDom={block}/>
+                ))
+            }
+        </ScrollArea>
     )
 }

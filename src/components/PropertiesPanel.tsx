@@ -25,7 +25,7 @@ export function PropertiesPanel({component}: { component: AIComponent }) {
 }
 
 function RenderPropertyEditor({property}: { property: ComponentPropertyEditor }) {
-    if (property.editorType === 'boolean') {
+    if (['boolean', 'visibility'].includes(property.editorType!)) {
         return <Checkbox label={property.name} checked={property.value === 'True'} readOnly/>
     }
     if (property.editorType === 'float') {

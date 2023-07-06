@@ -8,3 +8,7 @@ body {
     /*position: absolute;*/
     /*bottom: 0;*/
 }
+
+.mantine-List-itemWrapper {
+    display: block;
+}

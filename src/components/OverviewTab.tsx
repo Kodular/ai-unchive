@@ -8,7 +8,7 @@ const COLORS = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#5e35b1'];
 function RenderPieChart({data}: { data: { name: string, value: number }[] }) {
     const sortedData = data.sort((a, b) => b.value - a.value)
     return (
-        <ResponsiveContainer height={300} width="100%">
+        <ResponsiveContainer>
             <PieChart>
                 <Pie data={sortedData} dataKey="value" cx="50%" cy="50%" outerRadius={100} innerRadius={50}>
                     {sortedData.map((_, index) => (
@@ -71,7 +71,7 @@ export function OverviewTab({project}: { project: AIProject }) {
                 <ProjectPropertiesPanel properties={project.properties}/>
             </Grid.Col>
             <Grid.Col span={6}>
-                <ScrollArea offsetScrollbars style={{height: "calc(100vh - 120px)"}}>
+                <ScrollArea offsetScrollbars style={{height: "calc(100vh - 120px)", width: '100%'}}>
                     <RenderPieChart data={blocksPerScreen}/>
                     <RenderPieChart data={assetsPerType}/>
                 </ScrollArea>

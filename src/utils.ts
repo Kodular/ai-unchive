@@ -11,11 +11,11 @@ export function convertAiColor(color: string) {
 }
 
 export async function getTextFileContent(file: Entry): Promise<string> {
-    return await file.getData(new TextWriter())
+    return await file.getData!(new TextWriter())
 }
 
 export async function getBlobFileContent(file: Entry): Promise<Blob> {
-    return await file.getData(new BlobWriter())
+    return await file.getData!(new BlobWriter())
 }
 
 export function getFileInfo(file: Entry): [string, string] {

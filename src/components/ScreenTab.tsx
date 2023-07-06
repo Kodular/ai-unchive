@@ -17,7 +17,7 @@ export function ScreenTab({screen}: { screen: AIScreen }) {
                     <PropertiesPanel component={selected}/>
                 </Grid.Col>
                 <Grid.Col span={6}>
-                    <BlocksPanel blocks={screen.blocks}/>
+                    <BlocksPanel blocksXml={screen.blocks}/>
                 </Grid.Col>
             </Grid>
         </Container>

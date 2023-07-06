@@ -1,6 +1,7 @@
 import {AIComponent} from "../unchive/ai_project";
 import React, {useState} from "react";
-import {Divider, Group, List, ScrollArea, Select, Stack} from "@mantine/core";
+import {Box, Divider, Flex, Group, List, ScrollArea, Select, Stack, ThemeIcon} from "@mantine/core";
+import {IconBox, IconComponents} from '@tabler/icons-react';
 
 export function LayoutPanel({form, selected, setSelected}: {
     form: AIComponent,
@@ -26,7 +27,7 @@ export function LayoutPanel({form, selected, setSelected}: {
             </Group>
             <Divider/>
             <ScrollArea offsetScrollbars style={{height: "calc(100vh - 150px)"}}>
-                <List listStyleType="none" withPadding>
+                <List listStyleType="none" w="100%" pl="1rem">
                     <TreeNode component={form} selected={selected} setSelected={setSelected}
                               visibility={visibility}
                     />
@@ -60,11 +61,21 @@ function TreeNode({component, selected, setSelected, visibility}
     }
 
     return (
-        <List.Item onClick={onSelect}>
-            <Stack spacing={0} style={{backgroundColor: component === selected ? "#4dabf733" : undefined}}>
+        <List.Item onClick={onSelect} w="100%">
+            <div style={{
+                display: 'flex',
+                backgroundColor: component === selected ? "#60a5fa33" : undefined,
+                marginLeft: '-100%',
+                marginRight: '100%',
+                paddingLeft: '100%',
+                paddingRight: '100%'
+            }}>
+                <span style={{marginLeft: '-0.5rem', marginRight: '0.5rem'}}>
+                    {component.children.length ? <IconBox size="1rem"/> : <IconComponents size="1rem"/>}
+                </span>
                 {component.name}
-            </Stack>
-            <List listStyleType="none" withPadding style={{borderLeft: "1px solid #ddd8"}}>
+            </div>
+            <List listStyleType="none" withPadding style={{borderLeft: "2px solid #8888", width: '100%'}}>
                 {
                     component.children?.map((child, i) => (
                         <TreeNode component={child} key={i} selected={selected} setSelected={setSelected}
