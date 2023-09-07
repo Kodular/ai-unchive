@@ -24,7 +24,7 @@ export function Explorer({file}: { file: File }) {
     }
 
     return (
-        <Tabs defaultValue="overview" keepMounted={false}>
+        <Tabs defaultValue="overview" keepMounted>
             <Tabs.List>
                 <Tabs.Tab value="overview"><b>{project.name}</b></Tabs.Tab>
                 <Indicator label={project.assets.length} inline size={16}>

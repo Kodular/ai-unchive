@@ -1,5 +1,5 @@
-import React, {useMemo} from "react";
-import {ScrollArea} from "@mantine/core";
+import React, {useMemo, useState} from "react";
+import {Flex, ScrollArea, Switch, Text} from "@mantine/core";
 import BlocklyComponent from "./BlocklyComponent";
 
 export function BlocksPanel({blocksXml}: { blocksXml: string }) {
@@ -9,13 +9,32 @@ export function BlocksPanel({blocksXml}: { blocksXml: string }) {
             .filter(b => b.tagName === 'block')
     }, [blocksXml])
 
+    const [renderBlocks, setRenderBlocks] = useState(false)
+
     return (
-        <ScrollArea h="calc(100vh - 110px)">
-            {
-                blocks.map((block, i) => (
-                    <BlocklyComponent key={i} blocksDom={block}/>
-                ))
-            }
-        </ScrollArea>
+        <>
+            <Flex justify="space-between" py={4}>
+                <Text>
+                    Top blocks = {blocks.length} / Total blocks = {blocksXml.match(/<\/block>/g)?.length ?? 'failed'}
+                </Text>
+                <Switch
+                    label="Render blocks"
+                    checked={renderBlocks}
+                    onChange={(event) => setRenderBlocks(event.currentTarget.checked)}
+                />
+            </Flex>
+            <ScrollArea h="calc(100vh - 140px)">
+                {renderBlocks ? (
+                    blocks.map((block, i) => (
+                        <BlocklyComponent key={i} blocksDom={block}/>
+                    ))
+                ) : (
+                    <pre>
+                        {blocksXml}
+                    </pre>
+                )}
+                {/*<BlocklyComponent blocksDom={Blockly.Xml.textToDom(blocksXml)}/>*/}
+            </ScrollArea>
+        </>
     )
 }
