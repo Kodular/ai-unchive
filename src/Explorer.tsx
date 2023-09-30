@@ -1,7 +1,7 @@
 import {Center, Loader, Tabs} from '@mantine/core';
 import React from "react";
 import {useQuery} from "@tanstack/react-query";
-import {AIAReader} from "./unchive/aia_reader";
+import {AIAReader} from "aia-kit";
 import {IconDeviceMobile, IconIcons, IconPuzzle} from "@tabler/icons-react";
 import {ScreenTab} from "./components/ScreenTab";
 import {ExtensionsTab} from "./components/ExtensionsTab";

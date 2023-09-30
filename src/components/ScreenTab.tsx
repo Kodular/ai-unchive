@@ -1,4 +1,4 @@
-import {AIScreen} from "../unchive/ai_project";
+import {AIScreen} from "aia-kit/dist/ai_screen";
 import React, {useState} from "react";
 import {Container, Grid} from "@mantine/core";
 import {LayoutPanel} from "./LayoutPanel";

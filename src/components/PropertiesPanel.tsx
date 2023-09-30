@@ -1,7 +1,8 @@
-import {AIComponent} from "../unchive/ai_project";
+import {AIComponent} from "aia-kit/dist/ai_component";
 import {Badge, Checkbox, ColorInput, Divider, Group, NumberInput, ScrollArea, Stack, TextInput} from "@mantine/core";
 import React from "react";
-import {convertAiColor} from "../utils";
+import {parseAiBoolean, parseAiColor,} from "aia-kit/dist/utils/utils";
+import {ComponentPropertyEditor} from "aia-kit/dist/types";
 
 export function PropertiesPanel({component}: { component: AIComponent }) {
   return (
@@ -28,13 +29,13 @@ export function PropertiesPanel({component}: { component: AIComponent }) {
 
 function RenderPropertyEditor({property}: { property: ComponentPropertyEditor }) {
     if (['boolean', 'visibility'].includes(property.editorType!)) {
-        return <Checkbox label={property.name} checked={property.value === 'True'} readOnly/>
+        return <Checkbox label={property.name} checked={parseAiBoolean(property.value)} readOnly/>
     }
     if (property.editorType === 'float') {
         return <NumberInput label={property.name} value={parseFloat(property.value)} readOnly/>
     }
     if (property.editorType === 'color' || property.value.startsWith('&H')) {
-        return <ColorInput label={property.name} value={convertAiColor(property.value)} readOnly/>
+        return <ColorInput label={property.name} value={parseAiColor(property.value)} readOnly/>
     }
     return <TextInput label={property.name} value={property.value} readOnly/>
 }

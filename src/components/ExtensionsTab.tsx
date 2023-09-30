@@ -1,4 +1,4 @@
-import {AIExtension} from "../unchive/ai_project";
+import {AIExtension} from "aia-kit/dist/ai_extension";
 import {Center, ScrollArea, Table} from "@mantine/core";
 import React from "react";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import {AIProject} from "../unchive/ai_project";
+import {AIProject} from "aia-kit/dist/ai_project";
 import {Avatar, Badge, Divider, Grid, Group, RingProgress, ScrollArea, Stack, Text, TextInput} from "@mantine/core";
 import {getPackageName} from "../utils";
 
@@ -37,7 +37,7 @@ function RenderPieChart({data, title}: { data: { name: string, value: number }[]
   )
 }
 
-function ProjectPropertiesPanel({properties}: { properties: { name: string, value: string }[] }) {
+function ProjectPropertiesPanel({properties}: { properties: Record<string, string> }) {
   return (
     <div>
       <Group justify="apart" style={{padding: '8px 4px'}}>
@@ -48,8 +48,8 @@ function ProjectPropertiesPanel({properties}: { properties: { name: string, valu
                   styles={{viewport: {height: "calc(100dvh - var(--app-shell-header-height) - 82px)"}}}>
         <Stack gap='xs'>
           {
-            properties.map((property, i) => (
-              <TextInput key={i} label={property.name} value={property.value} readOnly/>
+            Object.entries(properties).map(([name, value], i) => (
+              <TextInput key={i} label={name} value={value} readOnly/>
             ))
           }
         </Stack>

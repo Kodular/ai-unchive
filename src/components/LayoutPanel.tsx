@@ -1,4 +1,4 @@
-import {AIComponent} from "../unchive/ai_project";
+import {AIComponent} from "aia-kit/dist/ai_component";
 import React, {useState} from "react";
 import {Divider, Flex, Group, List, ScrollArea, Select, Text} from "@mantine/core";
 import {

@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useRef} from 'react';
-import {getDescriptor} from "../utils";
+import React, {useCallback, useRef} from 'react';
+import {getDescriptor} from "aia-kit/dist/utils/utils";
 
 declare global {
     const Blockly: any

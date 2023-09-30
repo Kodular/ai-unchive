@@ -29,6 +29,7 @@
     "@tabler/icons-react": "^2.37.0",
     "@tanstack/react-query": "^4.35.3",
     "@zip.js/zip.js": "^2.7.29",
+    "aia-kit": "^1.0.1",
     "pretty-bytes": "^6.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

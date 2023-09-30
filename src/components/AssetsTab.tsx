@@ -1,4 +1,4 @@
-import {AIAsset} from "../unchive/ai_project";
+import {AIAsset} from "aia-kit/dist/ai_asset";
 import prettyBytes from "pretty-bytes";
 import {Anchor, Center, Divider, ScrollArea, Table} from "@mantine/core";
 import React from "react";
