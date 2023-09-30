@@ -1,4 +1,4 @@
-import {Center, Indicator, Loader, Tabs} from '@mantine/core';
+import {Center, Loader, Tabs} from '@mantine/core';
 import React from "react";
 import {useQuery} from "@tanstack/react-query";
 import {AIAReader} from "./unchive/aia_reader";
@@ -20,23 +20,27 @@ export function Explorer({file}: { file: File }) {
     }
 
     if (isLoading) {
-        return <Center style={{height: "100%"}}><Loader/></Center>
+        return <Center h="calc(100dvh - var(--app-shell-header-height))"><Loader/></Center>
     }
 
     return (
         <Tabs defaultValue="overview" keepMounted>
             <Tabs.List>
                 <Tabs.Tab value="overview"><b>{project.name}</b></Tabs.Tab>
-                <Indicator label={project.assets.length} inline size={16}>
-                    <Tabs.Tab value="assets" icon={<IconIcons/>}>Assets</Tabs.Tab>
-                </Indicator>
-                <Indicator label={project.extensions.length} inline size={16}>
-                    <Tabs.Tab value="extensions" icon={<IconPuzzle/>}>Extensions</Tabs.Tab>
-                </Indicator>
+                <Tabs.Tab value="assets"
+                          leftSection={<IconIcons size='1.2rem' stroke={1.5}/>}>
+                  Assets
+                </Tabs.Tab>
+                <Tabs.Tab value="extensions"
+                          leftSection={<IconPuzzle size='1.2rem' stroke={1.5}/>}>
+                  Extensions
+                </Tabs.Tab>
                 {
                     project.screens.map((screen) => (
                         <Tabs.Tab key={screen.name} value={screen.name}
-                                  icon={<IconDeviceMobile/>}>{screen.name}</Tabs.Tab>
+                                  leftSection={<IconDeviceMobile size='1.2rem' stroke={1.5}/>}>
+                          {screen.name}
+                        </Tabs.Tab>
                     ))
                 }
             </Tabs.List>

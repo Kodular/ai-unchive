@@ -25,12 +25,13 @@ function RenderPieChart({data}: { data: { name: string, value: number }[] }) {
 function ProjectPropertiesPanel({properties}: { properties: { name: string, value: string }[] }) {
     return (
         <div>
-            <Group position="apart" style={{padding: '8px 4px'}}>
+            <Group justify="apart" style={{padding: '8px 4px'}}>
                 <div>Project Properties</div>
             </Group>
             <Divider/>
-            <ScrollArea offsetScrollbars style={{height: "calc(100vh - 150px)"}}>
-                <Stack>
+            <ScrollArea offsetScrollbars scrollbarSize={6} scrollHideDelay={300}
+                        styles={{viewport:{height:"calc(100dvh - var(--app-shell-header-height) - 82px)"}}}>
+                <Stack gap='xs'>
                     {
                         properties.map((property, i) => (
                             <TextInput key={i} label={property.name} value={property.value} readOnly/>
@@ -43,10 +44,10 @@ function ProjectPropertiesPanel({properties}: { properties: { name: string, valu
 }
 
 export function OverviewTab({project}: { project: AIProject }) {
-    const totalBlocks = project.screens.reduce((a, s) => a + (s.blocks?.match(/<block/g) || []).length, 0)
+    const totalBlocks = project.screens.reduce((a, s) => a + (s.blocks?.match(/<\/block>/g) || []).length, 0)
     const blocksPerScreen = project.screens.map(s => ({
         name: s.name,
-        value: (s.blocks?.match(/<block/g) || []).length / totalBlocks
+        value: (s.blocks?.match(/<\/block>/g) || []).length / totalBlocks
     }))
 
     const totalAssets = project.assets.length
@@ -71,7 +72,7 @@ export function OverviewTab({project}: { project: AIProject }) {
                 <ProjectPropertiesPanel properties={project.properties}/>
             </Grid.Col>
             <Grid.Col span={6}>
-                <ScrollArea offsetScrollbars style={{height: "calc(100vh - 120px)", width: '100%'}}>
+                <ScrollArea offsetScrollbars>
                     <RenderPieChart data={blocksPerScreen}/>
                     <RenderPieChart data={assetsPerType}/>
                 </ScrollArea>

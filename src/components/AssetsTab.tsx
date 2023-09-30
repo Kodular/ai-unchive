@@ -1,46 +1,51 @@
 import {AIAsset} from "../unchive/ai_project";
 import prettyBytes from "pretty-bytes";
-import {Anchor, Divider, ScrollArea, Table} from "@mantine/core";
+import {Anchor, Center, Divider, ScrollArea, Table} from "@mantine/core";
 import React from "react";
 
 export function AssetsTab({assets}: { assets: AIAsset[] }) {
-    const ths = (
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Size</th>
-            <th>Download</th>
-        </tr>
-    );
+  if (assets.length === 0) {
+    return <Center h='calc(100dvh - var(--app-shell-header-height) - 41px)'>nothing in here...</Center>
+  }
 
-    const rows = assets.map((asset) => (
-        <tr key={asset.name}>
-            <td>{asset.name}</td>
-            <td>{asset.type}</td>
-            <td align="right">{prettyBytes(asset.size)}</td>
-            <td><Anchor href={asset.getURL()} target="_blank">Download</Anchor></td>
-        </tr>
-    ));
+  const ths = (
+    <Table.Tr>
+      <Table.Th>Name</Table.Th>
+      <Table.Th>Type</Table.Th>
+      <Table.Th align="right">Size</Table.Th>
+      <Table.Th>Download</Table.Th>
+    </Table.Tr>
+  );
 
-    return (
-        <ScrollArea offsetScrollbars style={{height: "calc(100vh - 150px)"}}>
-            <Table highlightOnHover horizontalSpacing="xl">
-                <thead>{ths}</thead>
-                <tbody>{rows}</tbody>
-                <tfoot>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td align="right">
-                        <Divider/>
-                        <p>
-                            &sum; = {prettyBytes(assets.map(it => it.size).reduce((a, v) => a + v, 0))}
-                        </p>
-                    </td>
-                    <td></td>
-                </tr>
-                </tfoot>
-            </Table>
-        </ScrollArea>
-    )
+  const rows = assets.map((asset) => (
+    <Table.Tr key={asset.name}>
+      <Table.Td>{asset.name}</Table.Td>
+      <Table.Td>{asset.type}</Table.Td>
+      <Table.Td align="right">{prettyBytes(asset.size)}</Table.Td>
+      <Table.Td><Anchor href={asset.getURL()} target="_blank">Download</Anchor></Table.Td>
+    </Table.Tr>
+  ));
+
+  return (
+    <ScrollArea offsetScrollbars scrollbarSize={6} scrollHideDelay={300}
+                styles={{viewport: {height: "calc(100dvh - var(--app-shell-header-height) - 41px)"}}}>
+      <Table highlightOnHover horizontalSpacing="xl">
+        <Table.Thead>{ths}</Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
+        <Table.Tfoot>
+          <Table.Tr>
+            <Table.Td></Table.Td>
+            <Table.Td></Table.Td>
+            <Table.Td align="right">
+              <Divider/>
+              <p>
+                &sum; = {prettyBytes(assets.map(it => it.size).reduce((a, v) => a + v, 0))}
+              </p>
+            </Table.Td>
+            <Table.Td></Table.Td>
+          </Table.Tr>
+        </Table.Tfoot>
+      </Table>
+    </ScrollArea>
+  )
 }

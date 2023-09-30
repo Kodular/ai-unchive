@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {getDescriptor} from "../utils";
 
 declare global {
@@ -7,13 +7,12 @@ declare global {
 }
 
 function BlocklyComponent({blocksDom}: { blocksDom: Element }) {
-    const divRef = useRef<HTMLDivElement | null>(null);
     const wsRef = useRef<typeof BlocklyWorkspace | null>(null);
 
-    useEffect(() => {
-        if (divRef.current) {
+    const blocklyDivRef = useCallback((blocklyDiv: HTMLDivElement) => {
+        if (blocklyDiv) {
             if (!wsRef.current) {
-                const newWs = Blockly.inject(divRef.current, {
+                const ws = Blockly.inject(blocklyDiv, {
                     readOnly: true,
                     trashcan: false,
                     toolbox: false,
@@ -34,11 +33,16 @@ function BlocklyComponent({blocksDom}: { blocksDom: Element }) {
                     //     pinch: true,
                     // },
                 });
-                newWs.setScale(1)
-                newWs.getDescriptor = getDescriptor
-                Blockly.Xml.domToBlock(blocksDom, newWs).setCollapsed(false)
+                ws.translate(0, 0);
+                ws.setScale(1);
+                ws.scrollCenter();
+                ws.getDescriptor = getDescriptor
+                const block = Blockly.Xml.domToWorkspace(blocksDom, ws)
 
-                wsRef.current = newWs;
+                // cleanUp the blockly workspace
+                // ws.scrollCenter()
+
+                wsRef.current = ws;
 
                 console.log('created new workspace...');
             }
@@ -47,10 +51,12 @@ function BlocklyComponent({blocksDom}: { blocksDom: Element }) {
                 console.log('resizing workspace...');
 
                 let metrics = wsRef.current.getMetrics();
-                divRef.current.setAttribute(
-                    'style',
-                    `height: ${metrics.contentHeight}px; width: ${metrics.contentWidth}px;`
-                );
+                // divRef.current.setAttribute(
+                //     'style',
+                //     `height: ${metrics.contentHeight}px; width: ${metrics.contentWidth}px;`
+                // );
+
+                wsRef.current.resizeContents();
 
                 Blockly.svgResize(wsRef.current);
             }
@@ -59,10 +65,10 @@ function BlocklyComponent({blocksDom}: { blocksDom: Element }) {
         // return () => {
         //     wsRef.current?.dispose();
         // }
-    }, [divRef, wsRef, blocksDom]);
+    }, [wsRef, blocksDom]);
 
     return (
-        <div ref={divRef}/>
+        <div ref={blocklyDivRef} className="blocklyDiv"/>
     );
 }
 

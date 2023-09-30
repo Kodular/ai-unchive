@@ -1,84 +1,79 @@
 import {
-    Anchor,
-    AppShell,
-    Avatar,
-    Button,
-    Center,
-    FileButton,
-    Group,
-    Header,
-    MantineProvider,
-    Select,
-    Text
+  ActionIcon,
+  Anchor,
+  AppShell,
+  Avatar,
+  Button,
+  Center,
+  FileButton,
+  Group,
+  Select,
+  Text
 } from '@mantine/core'
 import {Explorer} from './Explorer'
 import React, {useState} from "react";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import {useColorScheme} from "@mantine/hooks";
-
-const queryClient = new QueryClient()
+import {IconBrandGithub} from "@tabler/icons-react";
 
 function App() {
-    const colorScheme = useColorScheme();
+  return (
+    <AppShell header={{height: 48}}>
+      <AppShell.Header>
+        <TitleBar/>
+      </AppShell.Header>
+      <AppShell.Main>
+        <Content/>
+      </AppShell.Main>
+    </AppShell>
+  )
+}
 
-    return (
-        <MantineProvider withGlobalStyles withNormalizeCSS
-                         theme={{
-                             colorScheme,
-                             primaryColor: "violet"
-                         }}
+function UnchiveLogo() {
+  return (
+    <Anchor href="/" underline='never' display='inline-flex' >
+      <Avatar src="logo.png" alt="logo"/>
+      <Group px='xs' gap={5}>
+        <Text
+          span
+          size="xl"
+          fw={900}
+          variant="gradient"
+          gradient={{from: 'pink', to: 'yellow'}}
         >
-            <QueryClientProvider client={queryClient}>
-                <AppShell
-                    padding={0}
-                    header={<TitleBar/>}
-                    styles={(theme) => ({
-                        main: {
-                            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]
-                        },
-                    })}
-                >
-                    <Content/>
-                </AppShell>
-            </QueryClientProvider>
-        </MantineProvider>
-    )
+          Unchive
+        </Text>
+        <Text span size="lg" fw={700}> by Kodular</Text>
+      </Group>
+    </Anchor>
+  )
 }
 
 function TitleBar() {
-    return (
-        <Header height={50}>
-            <Group sx={{height: '100%'}} px={20} position="apart">
-                <Anchor href="/" underline={false}>
-                    <Group>
-                        <Avatar src="logo.png" alt="logo"/>
-                        <span>
-                            <Text
-                                span
-                                size="xl"
-                                fw={700}
-                                variant="gradient"
-                                gradient={{from: 'pink', to: 'yellow'}}
-                            >
-                                Unchive
-                            </Text>
-                            <Text span> by Kodular</Text>
-                        </span>
-                    </Group>
-                </Anchor>
-                <Select
-                    size="xs"
-                    placeholder="Language"
-                    defaultValue="en"
-                    data={[
-                        {value: 'en', label: 'English'},
-                        {value: 'de', label: 'German'},
-                        {value: 'es', label: 'Spanish'},
-                    ]}
-                />
-            </Group>
-        </Header>
-    )
+  return (
+    <Group h='100%' px='md' justify="space-between" style={{flex: 1}}>
+      <UnchiveLogo/>
+      <Group>
+        <Select
+          size="xs"
+          placeholder="Language"
+          defaultValue="en"
+          data={[
+            {value: 'en', label: 'English'},
+            {value: 'de', label: 'German'},
+            {value: 'es', label: 'Spanish'},
+          ]}
+        />
+        <ActionIcon
+          variant='default'
+          component="a"
+          href="https://mantine.dev"
+          target="_blank"
+          aria-label="Open in a new tab"
+        >
+          <IconBrandGithub size='1.2rem' stroke={1.5}/>
+        </ActionIcon>
+      </Group>
+    </Group>
+  )
 }
 
 function Content() {
@@ -89,7 +84,7 @@ function Content() {
     }
 
     return (
-        <Center style={{height: "100%"}}>
+        <Center h="calc(100dvh - var(--app-shell-header-height))">
             <FileButton onChange={setFile} accept=".aia,.aix">
                 {(props) => <Button {...props}>Select aia or aix file</Button>}
             </FileButton>
