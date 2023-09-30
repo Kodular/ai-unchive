@@ -2,6 +2,14 @@ import {AIProject} from "./unchive/ai_project";
 import {BlobWriter, Entry, TextWriter} from "@zip.js/zip.js";
 import simpleComponentsJson from './unchive/simple_components.json'
 
+export function getPackageName(project: AIProject) {
+    let mainClass = project.properties.find(x => x.name === 'main')?.value;
+    if (mainClass === undefined) {
+        return "undefined";
+    }
+    return mainClass.split('.').slice(0, -1).join('.');
+}
+
 /**
  * Convert the color in &HAARRGGBB format to #RRGGBBAA format
  * @param color

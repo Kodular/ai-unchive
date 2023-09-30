@@ -1,7 +1,8 @@
 import {Cell, LabelList, Legend, Pie, PieChart, ResponsiveContainer} from "recharts";
 import React from "react";
 import {AIProject} from "../unchive/ai_project";
-import {Avatar, Divider, Grid, Group, ScrollArea, Stack, TextInput} from "@mantine/core";
+import {Avatar, Divider, Grid, Group, ScrollArea, Stack, Text, TextInput} from "@mantine/core";
+import {getPackageName} from "../utils";
 
 const COLORS = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#5e35b1'];
 
@@ -67,6 +68,7 @@ export function OverviewTab({project}: { project: AIProject }) {
         <Grid>
             <Grid.Col span={3}>
                 <Avatar radius="md" size="xl" color="dark" src="/logo.png"/>
+                <Text>Package Name = {getPackageName(project)}</Text>
             </Grid.Col>
             <Grid.Col span={3}>
                 <ProjectPropertiesPanel properties={project.properties}/>
