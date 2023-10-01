@@ -29,13 +29,13 @@ export function PropertiesPanel({component}: { component: AIComponent }) {
 
 function RenderPropertyEditor({property}: { property: ComponentPropertyEditor }) {
     if (['boolean', 'visibility'].includes(property.editorType!)) {
-        return <Checkbox label={property.name} checked={parseAiBoolean(property.value)} readOnly/>
+        return <Checkbox label={property.name} checked={parseAiBoolean(property.value)} readOnly size='xs'/>
     }
     if (property.editorType === 'float') {
-        return <NumberInput label={property.name} value={parseFloat(property.value)} readOnly/>
+        return <NumberInput label={property.name} value={parseFloat(property.value)} readOnly size='xs'/>
     }
     if (property.editorType === 'color' || property.value.startsWith('&H')) {
-        return <ColorInput label={property.name} value={parseAiColor(property.value)} readOnly/>
+        return <ColorInput label={property.name} value={parseAiColor(property.value)} readOnly size='xs'/>
     }
-    return <TextInput label={property.name} value={property.value} readOnly/>
+    return <TextInput label={property.name} value={property.value} readOnly size='xs'/>
 }

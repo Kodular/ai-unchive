@@ -1,7 +1,22 @@
 import React from "react";
 import {AIProject} from "aia-kit/dist/ai_project";
-import {Avatar, Badge, Divider, Grid, Group, RingProgress, ScrollArea, Stack, Text, TextInput} from "@mantine/core";
+import {
+  Avatar,
+  Badge,
+  ColorInput,
+  Checkbox,
+  NumberInput,
+  Divider,
+  Grid,
+  Group,
+  RingProgress,
+  ScrollArea,
+  Stack,
+  Text,
+  TextInput
+} from "@mantine/core";
 import {getPackageName} from "../utils";
+import {parseAiBoolean, parseAiColor} from "aia-kit/dist/utils/utils";
 
 const COLORS = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#5e35b1'];
 
@@ -38,6 +53,19 @@ function RenderPieChart({data, title}: { data: { name: string, value: number }[]
 }
 
 function ProjectPropertiesPanel({properties}: { properties: Record<string, string> }) {
+  function RenderProperty({name, value}: {name: string, value: string}) {
+    if (['True', 'False'].includes(value)) {
+      return <Checkbox label={name} checked={parseAiBoolean(value)} readOnly size='xs'/>
+    }
+    if (!Number.isNaN(Number.parseFloat(value))) {
+      return <NumberInput label={name} value={parseFloat(value)} readOnly size='xs'/>
+    }
+    if (value.startsWith('&H')) {
+      return <ColorInput label={name} value={parseAiColor(value)} readOnly size='xs'/>
+    }
+    return <TextInput label={name} value={value} readOnly size='xs'/>
+  }
+
   return (
     <div>
       <Group justify="apart" style={{padding: '8px 4px'}}>
@@ -49,7 +77,7 @@ function ProjectPropertiesPanel({properties}: { properties: Record<string, strin
         <Stack gap='xs'>
           {
             Object.entries(properties).map(([name, value], i) => (
-              <TextInput key={i} label={name} value={value} readOnly/>
+              <RenderProperty name={name} value={value} />
             ))
           }
         </Stack>
