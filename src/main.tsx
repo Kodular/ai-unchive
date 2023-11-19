@@ -1,26 +1,19 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import {MantineProvider, createTheme} from "@mantine/core";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import App from './App'
+import { createApp } from 'vue'
+import PrimeVue from 'primevue/config';
 
-// core styles are required for all packages
-import '@mantine/core/styles.css';
+import App from './App.vue'
 
-import './main.css'
+import 'primevue/resources/themes/mdc-dark-deeppurple/theme.css';
 
-const theme = createTheme({
-  primaryColor: "violet"
-});
+declare global {
+  const Blockly: any
+  const BlocklyWorkspace: any
+}
 
-const queryClient = new QueryClient()
+// import { Colors, Chart } from 'chart.js';
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <MantineProvider theme={theme} defaultColorScheme="auto">
-      <QueryClientProvider client={queryClient}>
-        <App/>
-      </QueryClientProvider>
-    </MantineProvider>
-  </React.StrictMode>
-)
+// Chart.register(Colors);
+
+let v = createApp(App)
+v.use(PrimeVue)
+v.mount('#app')

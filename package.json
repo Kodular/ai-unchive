@@ -6,32 +6,25 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vue-tsc && vite build",
     "preview": "vite preview"
   },
   "keywords": [],
   "author": "Kodular",
   "license": "ISC",
   "devDependencies": {
-    "@types/react": "^18.2.23",
-    "@types/react-dom": "^18.2.8",
-    "@vitejs/plugin-react": "^4.1.0",
-    "postcss": "^8.4.31",
-    "postcss-preset-mantine": "^1.7.0",
-    "postcss-simple-vars": "^7.0.1",
+    "@vitejs/plugin-vue": "^4.5.0",
     "typescript": "^5.2.2",
-    "vite": "^4.4.9"
+    "vite": "^4.4.9",
+    "vue-tsc": "^1.8.22"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@mantine/core": "^7.1.0",
-    "@mantine/hooks": "^7.1.0",
-    "@tabler/icons-react": "^2.37.0",
-    "@tanstack/react-query": "^4.35.3",
+    "@tabler/icons-vue": "^2.41.0",
     "@zip.js/zip.js": "^2.7.29",
-    "aia-kit": "^1.0.1",
+    "aia-kit": "^1.0.2",
+    "chart.js": "^4.4.0",
     "pretty-bytes": "^6.1.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "primevue": "^3.40.1",
+    "vue": "^3.3.8"
   }
 }
